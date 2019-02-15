@@ -4,13 +4,10 @@
   </head>
   <body>
     <p>
-      <form action="register.php" method="post">
+      <form action="login.php" method="post">
         Nom d'utilisateur : <input type="text" name="user" required><br>
         Mot de passe : <input type="password" name="password" required><br>
-        Nom : <input type="text" name="last_name" required><br>
-        Pr&eacute;nom : <input type="text" name="first_name" required><br>
-        Date de naissance : <input type="date" name="date" required><br>
-        <input type="submit" value="S'inscrire">
+        <input type="submit" value="Connexion">
       </form>
 
 
@@ -19,10 +16,6 @@
           // On met les valeurs rentrées dans notre formulaire dans des variables (pas obligatoire)
           $user = $_POST['user'];
           $password = password_hash($_POST['password'], PASSWORD_DEFAULT);  // Hashage du mot de passe, pour pas à l'avoir en clair dans notre BD
-          $nom = $_POST['last_name'];
-          $prenom = $_POST['first_name'];
-          $date_naissance = $_POST['date'];
-
 
           // Inclusion des paramètres de connexion de notre BD
           include_once("myparam.inc.php");
@@ -39,19 +32,31 @@
             die('Erreur : ' . $e->getMessage());
           }
 
+          $message = '';
+
           // On prépare la requête d'insertion
-          $req = $bdd->prepare('INSERT INTO users(login, password, nom, prenom, date_naissance, date_inscription)
-                                VALUES (:login, :password, :nom, :prenom, :date_naissance, NOW() )');
+          $req = $bdd->prepare('SELECT login, password FROM users WHERE login = :login');
           // On exécute la requête avec nos valeurs
           $req->execute(array(
             'login' => $user,
-            'password' => $password,
-            'nom' => $nom,
-            'prenom' => $prenom,
-            'date_naissance' => $date_naissance
           ));
+          $resultat = $req->fetch();
 
-          echo "Inscription de $user réussie<br>$password";
+          $isPasswordCorrect = password_verify($_POST['password'], $resultat['password']);
+          $req->CloseCursor();
+
+          if (!$isPasswordCorrect) $message = 'Mauvais identifiant ou mot de passe !';
+          else {
+            $message = "Connexion réussie";
+            $req = $bdd->prepare('UPDATE users SET derniere_connexion = NOW() WHERE login = :login');
+            $req->execute(array(
+              'login' => $user
+            ));
+          }
+
+
+
+          echo $message;
         }
       ?>
 
