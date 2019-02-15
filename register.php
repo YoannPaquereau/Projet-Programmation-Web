@@ -4,11 +4,15 @@
   $user = $_POST['user'];
   $password = password_hash($_POST['password'], PASSWORD_DEFAULT);  // Hashage du mot de passe, pour pas à l'avoir en clair dans notre BD
 
+  // Inclusion des paramètres de connexion de notre BD
+  include_once("myparam.inc.php");
+
+
 
   // On accède à notre base de données
   try
   {
-    $bdd = new PDO('mysql:host=localhost;dbname=projet;charset=utf8', 'root', '');
+    $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8', MYUSER, MYPASS);
   }
   catch (Exception $e)
   {
