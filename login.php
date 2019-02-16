@@ -1,3 +1,7 @@
+<?php
+  session_start();
+?>
+
 <html>
   <head>
     <title>AirB&B</title>
@@ -54,11 +58,25 @@
 
           // Sinon on se connecte
           else {
-            $message = "Connexion réussie";
+            $_SESSION['user'] = $user;
+
+            // On récupère la date de la dernière connexion avant de la mettre à jour
+            $req = $bdd->prepare('SELECT derniere_connexion FROM users WHERE login = :login');
+            // On exécute la requête avec nos valeurs
+            $req->execute(array(
+              'login' => $user,
+            ));
+            // On met le résultat de notre requête dans une variable
+            $resultat = $req->fetch();
+            $_SESSION['last_connection'] = $resultat['derniere_connexion'];
+            $req->CloseCursor();
+
+            // On met à jour la date de la dernière connexion dans notre BD
             $req = $bdd->prepare('UPDATE users SET derniere_connexion = NOW() WHERE login = :login');
             $req->execute(array(
               'login' => $user
             ));
+            header('Location: index.php');
           }
 
 
