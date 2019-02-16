@@ -40,12 +40,19 @@
           $req->execute(array(
             'login' => $user,
           ));
+          // On met le résultat de notre requête dans une variable
           $resultat = $req->fetch();
 
+          // On vérifie si le mot de passe passé dans le formulaire est indentique à celui de la BD
           $isPasswordCorrect = password_verify($_POST['password'], $resultat['password']);
+
+          // On ferme la requête
           $req->CloseCursor();
 
+          // Si le mot de passe et/ou le nom d'utilisateur est incorrect
           if (!$isPasswordCorrect) $message = 'Mauvais identifiant ou mot de passe !';
+
+          // Sinon on se connecte
           else {
             $message = "Connexion réussie";
             $req = $bdd->prepare('UPDATE users SET derniere_connexion = NOW() WHERE login = :login');
