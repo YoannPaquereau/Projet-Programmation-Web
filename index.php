@@ -6,7 +6,10 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Accueil</title>
+    <title>ShareMyHouse</title>
+    <?php
+      require "header.php";
+    ?>
   </head>
 
   <body>

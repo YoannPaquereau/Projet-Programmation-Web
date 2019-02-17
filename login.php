@@ -4,9 +4,12 @@
 
 <html>
   <head>
-    <title>AirB&B</title>
+    <title>ShareMyHouse - Connexion</title>
   </head>
   <body>
+    <?php
+      require "header.php";
+    ?>
     <p>
       <form action="login.php" method="post">
         Nom d'utilisateur : <input type="text" name="user" required><br>
