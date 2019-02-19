@@ -8,7 +8,7 @@
   </head>
   <body>
     <?php
-      require "header.php";
+      require "../header.php";
     ?>
     <p>
       <form action="login.php" method="post">
@@ -79,7 +79,7 @@
             $req->execute(array(
               'login' => $user
             ));
-            header('Location: index.php');
+            header('Location: ../index.php');
           }
 
 

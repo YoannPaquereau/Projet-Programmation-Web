@@ -51,7 +51,7 @@
             'date_naissance' => $date_naissance
           ));
 
-          echo "Inscription de $user réussie<br>$password";
+          echo "Inscription de $user réussie<br><a href=\"login.php\">Se connecter</a>";
         }
       ?>
 
