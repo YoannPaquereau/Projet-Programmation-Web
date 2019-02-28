@@ -79,7 +79,7 @@
             $req->execute(array(
               'login' => $user
             ));
-            header('Location: ../index.php');
+            header('Location: /Projet/index.php');
           }
 
 
