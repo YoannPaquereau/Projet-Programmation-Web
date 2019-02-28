@@ -8,7 +8,7 @@
         <li><a href="/Projet/register_login/login.php">Connexion</a></li>
       <?php
       } else { ?>
-        <li><a href="annonce.php">Annonce</a></li>
+        <li><a href="annonce.php">Annonces</a></li>
         <li><a href="/Projet/register_login/account_info.php">Mon compte</a></li>
         <li><a href="/Projet/register_login/logout.php">D&eacute;connexion</a></li>
         <?php
