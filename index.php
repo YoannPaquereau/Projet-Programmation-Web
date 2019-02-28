@@ -15,7 +15,7 @@
     <p>
       <?php
         if (!isset($_SESSION['user'])) echo "Vous n'&ecirc;tes pas connect&eacute;<br/><a href=\"/Projet/register_login/login.php\">Connexion</a>";
-        else echo 'Bonjour '.$_SESSION['user'].'<br/>Derni&egrave;re connexion : '.$_SESSION['last_connection'].'<br/><a href="/Projet/register_login/logout.php">D&eacute;connexion</a>';
+        else echo 'Bonjour '.$_SESSION['user'];
       ?>
     </p>
   </body>
