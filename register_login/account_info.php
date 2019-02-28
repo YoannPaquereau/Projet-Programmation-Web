@@ -3,14 +3,15 @@
 ?>
 
 <html>
-  <head>
+  <?php
+    require "../header.php";
+  ?>
     <meta charset="utf-8" />
     <title>Mon compte</title>
   </head>
 
   <body>
     <?php
-      require "../header.php";
       // Inclusion des paramètres de connexion de notre BD
       include_once("myparam.inc.php");
 

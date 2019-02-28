@@ -38,12 +38,6 @@ CREATE TABLE `users` (
   `derniere_connexion` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Déchargement des données de la table `users`
---
-
-INSERT INTO `users` (`login`, `password`, `nom`, `prenom`, `date_naissance`, `date_inscription`, `derniere_connexion`) VALUES
-('Yoann', '$2y$10$o74wNKk4tbiqtsEYlMvNTebE4jBNzt5S868yN..6h/Sjv6mC.u5aa', 'Paquereau', 'Yoann', '1998-03-24', '2019-02-15 22:15:16', '2019-02-15 22:35:01');
 
 --
 -- Index pour les tables déchargées
