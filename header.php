@@ -12,7 +12,6 @@
       <li><a href="annonce.php">Annonces</a></li>
       <li><a href="/Projet/register_login/account_info.php">Mon compte</a></li>
       <li><a href="/Projet/register_login/logout.php">D&eacute;connexion</a></li>
-      <li>D&eacute;connexion</li>
       <?php
     }
       ?>

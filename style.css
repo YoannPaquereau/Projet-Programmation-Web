@@ -1,3 +1,30 @@
+.menu li {
+  display: inline;
+  display: inline ;
+  margin-right: 1px ;
+  color: #fff ;
+  background: #c00 ;
+}
+
 .menu {
-  color: red;
+  margin: 0 ;
+  padding: 0 ;
+  list-style: none ;
+  text-align: center ;
+}
+
+.menu li a {
+  padding: 4px 20px ;
+  background: #c00 ;
+  color: #fff ;
+  border: 1px solid #600 ;
+  font: 1em "Trebuchet MS",Arial,sans-serif ;
+  line-height: 1em ;
+  text-align: center ;
+  text-decoration: none ;
+}
+
+.menu li a:hover, .menu li a:focus, .menu li a:active {
+  background: #900 ;
+  text-decoration: underline ;
 }

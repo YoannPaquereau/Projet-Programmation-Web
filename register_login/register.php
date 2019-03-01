@@ -1,5 +1,7 @@
 <html>
-  <head>
+  <?php
+    require "../header.php";
+  ?>
     <title>AirB&B</title>
   </head>
   <body>
