@@ -1,4 +1,7 @@
 <?php
+  /* Ajouter les informations concernant la note d'évaluation de l'utilisateur
+     Nos locations, .. */
+
   session_start();
 ?>
 
@@ -46,7 +49,7 @@
       $req->CloseCursor();
     ?>
 
-
+    <!-- On affiche les valeurs que l'on vient de récupérer sous forme de liste -->
     <h2>Mon compte</h2>
     <p>
       <ul>
