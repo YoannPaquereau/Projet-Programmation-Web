@@ -64,7 +64,7 @@
             $_SESSION['user'] = $user;
 
             // On récupère la date de la dernière connexion avant de la mettre à jour
-            $req = $bdd->prepare('SELECT derniere_connexion FROM users WHERE login = :login');
+            $req = $bdd->prepare('SELECT DATE_FORMAT(derniere_connexion,  \'%d/%m/%Y, à %Hh%i\') AS derniere_connexion FROM users WHERE login = :login');
             // On exécute la requête avec nos valeurs
             $req->execute(array(
               'login' => $user,

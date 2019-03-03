@@ -29,7 +29,8 @@
       }
 
       // On prépare la requête d'insertion
-      $req = $bdd->prepare('SELECT nom, prenom, date_naissance, date_inscription FROM users WHERE login = :login');
+      $req = $bdd->prepare('SELECT nom, prenom, DATE_FORMAT(date_naissance, \'%d/%m/%Y\') AS date_n,
+                            DATE_FORMAT(date_inscription, \'%d/%m/%Y, à %Hh%i\') as date_i FROM users WHERE login = :login');
       // On exécute la requête avec nos valeurs
       $req->execute(array(
         'login' => $_SESSION['user'],
@@ -41,12 +42,14 @@
       $user = $_SESSION['user'];
       $nom = $resultat['nom'];
       $prenom = $resultat['prenom'];
-      $date_naissance = $resultat['date_naissance'];
+      $date_naissance = $resultat['date_n'];
       $derniere_connexion = $_SESSION['last_connection'];
-      $date_inscription = $resultat['date_inscription'];
+      $date_inscription = $resultat['date_i'];
 
       // On ferme la requête
       $req->CloseCursor();
+
+
     ?>
 
     <!-- On affiche les valeurs que l'on vient de récupérer sous forme de liste -->
