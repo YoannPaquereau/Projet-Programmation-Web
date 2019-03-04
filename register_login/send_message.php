@@ -26,9 +26,9 @@
 
   $nbr = $req->fetch();
   $req->CloseCursor();
-  if ($nbr == 1) {
+  if ($nbr['nbr'] == 1) {
     echo 'true';
-    $req = $bdd->prepare('INSERT INTO messages_privees(expediteur, destinataire, message, date_envoi)
+    $req = $bdd->prepare('INSERT INTO messages_prives(expediteur, destinataire, message, date_envoi)
                           VALUES (:expediteur, :destinataire, :message, NOW())');
     $req->execute(array(
       'expediteur' => $_SESSION['user'],
