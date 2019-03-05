@@ -15,7 +15,9 @@
       <!-- Lister tous les messages privés de l'utilisateur -->
       <h3>Nouveau message</h3>
       <form action="send_message.php" method="post">
-        Destinataire : <input type="text" name="destinataire" required><br />
-        Message : <input type="text" name="message" required><br />
+        Destinataire : <input type="text" name="destinataire" required><br /><br />
+        <textarea name="message" rows="8" cols="45"></textarea>
         <input type="submit" name="Envoyer">
       </form>
+
+<!-- Fusionner avec le fichier send_message.php -->
