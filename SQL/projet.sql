@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  lun. 04 mars 2019 à 23:57
+-- Généré le :  mar. 05 mars 2019 à 15:17
 -- Version du serveur :  10.1.37-MariaDB
 -- Version de PHP :  7.3.1
 
@@ -30,11 +30,11 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `messages_prives` (
   `id_message` int(11) NOT NULL,
-  `expediteur` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  `destinataire` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  `message` text COLLATE utf8_unicode_ci NOT NULL,
+  `expediteur` varchar(20) COLLATE utf8_bin NOT NULL,
+  `destinataire` varchar(20) COLLATE utf8_bin NOT NULL,
+  `message` text COLLATE utf8_bin NOT NULL,
   `date_envoi` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -43,18 +43,14 @@ CREATE TABLE `messages_prives` (
 --
 
 CREATE TABLE `users` (
-  `login` varchar(20) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `nom` varchar(30) NOT NULL,
-  `prenom` varchar(30) NOT NULL,
+  `login` varchar(20) COLLATE utf8_bin NOT NULL,
+  `password` varchar(255) COLLATE utf8_bin NOT NULL,
+  `nom` varchar(30) COLLATE utf8_bin NOT NULL,
+  `prenom` varchar(30) COLLATE utf8_bin NOT NULL,
   `date_naissance` date NOT NULL,
   `date_inscription` datetime NOT NULL,
   `derniere_connexion` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Déchargement des données de la table `users`
---
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Index pour les tables déchargées
@@ -64,7 +60,9 @@ CREATE TABLE `users` (
 -- Index pour la table `messages_prives`
 --
 ALTER TABLE `messages_prives`
-  ADD PRIMARY KEY (`id_message`);
+  ADD PRIMARY KEY (`id_message`),
+  ADD KEY `destinataire` (`destinataire`),
+  ADD KEY `expediteur` (`expediteur`);
 
 --
 -- Index pour la table `users`
@@ -80,7 +78,18 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `messages_prives`
 --
 ALTER TABLE `messages_prives`
-  MODIFY `id_message` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_message` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `messages_prives`
+--
+ALTER TABLE `messages_prives`
+  ADD CONSTRAINT `messages_prives_ibfk_1` FOREIGN KEY (`destinataire`) REFERENCES `users` (`login`),
+  ADD CONSTRAINT `messages_prives_ibfk_2` FOREIGN KEY (`expediteur`) REFERENCES `users` (`login`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
