@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mar. 05 mars 2019 à 15:17
+-- Généré le :  mer. 06 mars 2019 à 18:07
 -- Version du serveur :  10.1.37-MariaDB
 -- Version de PHP :  7.3.1
 
@@ -32,6 +32,7 @@ CREATE TABLE `messages_prives` (
   `id_message` int(11) NOT NULL,
   `expediteur` varchar(20) COLLATE utf8_bin NOT NULL,
   `destinataire` varchar(20) COLLATE utf8_bin NOT NULL,
+  `titre` varchar(40) COLLATE utf8_bin NOT NULL,
   `message` text COLLATE utf8_bin NOT NULL,
   `date_envoi` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
