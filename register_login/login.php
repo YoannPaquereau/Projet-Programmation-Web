@@ -12,8 +12,8 @@
 
     <p>
       <form action="login.php" method="post">
-        Nom d'utilisateur : <input type="text" name="user" required><br>
-        Mot de passe : <input type="password" name="password" required><br>
+        <label for="user">Nom d'utilisateur :</label><input type="text" name="user" required><br>
+        <label for="password">Mot de passe :</label><input type="password" name="password" required><br>
         <input type="submit" value="Connexion">
       </form>
 

@@ -1,6 +1,7 @@
 <head>
   <meta charset="utf-8" />
-  <link rel="stylesheet" type='text/css' href="/Projet/style.css" />
+  <link rel="stylesheet" type='text/css' href="/Projet/CSS/style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet">
   <ul class="menu">
     <li><a href="/Projet">Accueil</a></li>
     <?php
@@ -16,5 +17,5 @@
       <?php
     }
       ?>
-      <li><a href="about.php">A propos</a></li>
+      <li><a href="/Projet/about.php">A propos</a></li>
     </ul>

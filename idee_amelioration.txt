@@ -1,3 +1,5 @@
 - Créer un fichier contenant des fonctions :
   - Pour se connecter à une base de données (évite de le recopier pour chaque fichier)
-  
+
+- Fusionner les fichiers connexion et inscription ???
+  - Laisser le choix à l'utilisateur
