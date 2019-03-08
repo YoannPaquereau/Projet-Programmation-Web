@@ -34,6 +34,9 @@
 
 
 
+
+
+
   elseif (isset($_POST["type"]) && isset($_POST["ville"]) && isset($_POST["prix"]) && isset($_POST["nombre_images"]))
   {
     $type = $_POST["type"];
