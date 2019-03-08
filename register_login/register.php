@@ -1,3 +1,7 @@
+<?php
+  session_start();
+ ?>
+
 <html>
   <?php
     require "../header.php";
@@ -6,13 +10,15 @@
   </head>
   <body>
     <p>
-      <form action="register.php" method="post">
-        Nom d'utilisateur : <input type="text" name="user" required><br>
-        Mot de passe : <input type="password" name="password" required><br>
-        Nom : <input type="text" name="last_name" required><br>
-        Pr&eacute;nom : <input type="text" name="first_name" required><br>
-        Date de naissance : <input type="date" name="date" required><br>
-        <input type="submit" value="S'inscrire">
+      <?php
+      if (!isset($_SESSION['user'])) { ?>
+      <form action="register.php" method="post" class="form_register">
+        <label for="login">Nom d'utilisateur :</label><input type="text" name="user" required><br>
+        <label for="paassword">Mot de passe :</label><input type="password" name="password" required><br>
+        <label for="nom">Nom :</label><input type="text" name="last_name" required><br>
+        <label for="prenom">Pr&eacute;nom :</label><input type="text" name="first_name" required><br>
+        <label for="date_naissance">Date de naissance :</label><input type="date" name="date" required><br><br>
+        <input type="submit" value="S'inscrire" id="submit">
       </form>
 
 
@@ -55,6 +61,8 @@
 
           echo "Inscription de $user réussie<br><a href=\"login.php\">Se connecter</a>";
         }
+      }
+      else echo "Error<br />Page not found";
       ?>
 
     </p>

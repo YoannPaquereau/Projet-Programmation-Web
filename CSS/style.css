@@ -1,3 +1,7 @@
+body {
+  font-family: 'Cantarell', sans-serif;
+}
+
 .menu li {
   display: inline;
   margin-right: 1px ;
@@ -26,4 +30,22 @@
 .menu li a:hover, .menu li a:focus, .menu li a:active {
   background: #900 ;
   text-decoration: underline ;
+}
+
+form {
+  width: 400px;
+  padding: 1em;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+}
+
+form label {
+  display: inline-flex;
+  width: 150px;
+}
+
+.form_register input, textarea {
+  font: 1em sans-serif;
+  box-sizing: border-box;
+  border: 1px solid #999;
 }
