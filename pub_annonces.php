@@ -12,7 +12,7 @@
 
 <body>
   <?php
-  if (isset($_POST["fichier0"]))
+  if (isset($_FILES["fichier0"]))
 
   {
     include "register_login/myparam.inc.php";
@@ -36,7 +36,8 @@
 
   ));
   echo $_SESSION['user'].' vous avez ajoutez avec succès un fichier de  type '.$_POST['type'].', a  '.$_POST['ville'].' au prix  '.$_POST['prix'].' <br>';
-}
+   echo $_FILES['fichier0']['size'];
+ }
 
 
 
@@ -57,7 +58,7 @@
     $prix = $_POST["prix"];
     $nbr_images = $_POST["nombre_images"];
     ?>
-    <form action="pub_annonces.php" method="post">
+    <form method="post" action="pub_annonces.php" enctype="multipart/form-data">
       <?php
       for ($i=0;$i<$nbr_images;$i++)
       { ?>
