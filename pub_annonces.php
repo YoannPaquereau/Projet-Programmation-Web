@@ -15,7 +15,7 @@
   if (isset($_POST["fichier0"]))
 
   {
-    include "myparam.inc.php";
+    include "register_login/myparam.inc.php";
     try{
 
     $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
@@ -24,17 +24,18 @@
   {
     die('erreur : '.$e->getmessage());
   }
-  $requete= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,nom)VALUES(:type,:ville,:prix,:date_publication,:nom) ")
+  $req= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,auteur)
+                           VALUES(:type,:ville,:prix,NOW(),:auteur) ");
 
   // On exécute la requête avec nos valeurs
   $req->execute(array(
-    'type' => $type,
-    'ville' => $ville,
-    'prix' => $prix,
-    'date_publication' => $date_publication,
-    'nom' => $nom
+    'type' => $_POST["type"],
+    'ville' => $_POST["ville"],
+    'prix' => $_POST["prix"],
+    'auteur' => $_SESSION["user"]
+
   ));
-  echo" $nom vous avez ajoutez avec succès un fichier de  type $type, a $ville au prix $prix"<br><a href=\"pub_annonces.php\"> </a>";
+  echo $_SESSION['user'].' vous avez ajoutez avec succès un fichier de  type '.$_POST['type'].', a  '.$_POST['ville'].' au prix  '.$_POST['prix'].' <br>';
 }
 
 
