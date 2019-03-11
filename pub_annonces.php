@@ -13,30 +13,35 @@
 <body>
   <?php
   if (isset($_FILES["fichier0"]))
-
   {
+
     include "register_login/myparam.inc.php";
-    try{
 
-    $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
-  }
-  catch(Exception $e)
-  {
-    die('erreur : '.$e->getmessage());
-  }
-  $req= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,auteur)
+    try
+    {
+      $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
+    }
+    catch(Exception $e)
+    {
+      die('erreur : '.$e->getmessage());
+    }
+
+    $req= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,auteur)
                            VALUES(:type,:ville,:prix,NOW(),:auteur) ");
 
-  // On exécute la requête avec nos valeurs
-  $req->execute(array(
-    'type' => $_POST["type"],
-    'ville' => $_POST["ville"],
-    'prix' => $_POST["prix"],
-    'auteur' => $_SESSION["user"]
+    // On exécute la requête avec nos valeurs
+    $req->execute(array(
+      'type' => $_POST["type"],
+      'ville' => $_POST["ville"],
+      'prix' => $_POST["prix"],
+      'auteur' => $_SESSION["user"]
+    ));
 
-  ));
-  echo $_SESSION['user'].' vous avez ajoutez avec succès un fichier de  type '.$_POST['type'].', a  '.$_POST['ville'].' au prix  '.$_POST['prix'].' <br>';
-   echo $_FILES['fichier0']['size'];
+    echo $_SESSION['user'].' vous avez ajoutez avec succès un fichier de  type '.$_POST['type'].', a  '.$_POST['ville'].' au prix  '.$_POST['prix'].' <br>';
+
+    for ($i=0; $i<$_POST['nombre_images']; $i++) {
+        echo $_FILES['fichier'.$i]['size'].' : '.$_FILES['fichier'.$i]['name'].'<br>';
+    }
  }
 
 
