@@ -38,21 +38,20 @@
     ));
 
     echo $_SESSION['user'].' vous avez ajoutez avec succès un fichier de  type '.$_POST['type'].', a  '.$_POST['ville'].' au prix  '.$_POST['prix'].' <br>';
-
+    $maxsize = 10000000;
     for ($i=0; $i<$_POST['nombre_images']; $i++) {
-        echo $_FILES['fichier'.$i]['size'].' : '.$_FILES['fichier'.$i]['name'].'<br>';
+      $extensions = array('png', 'gif', 'jpg', 'jpeg');
+      $ext = substr(strrchr($_FILES['fichier'.$i]['name'],'.'),1);
+
+      if ($_FILES['fichier'.$i]['error'] > 0) echo 'Echec de l\'envoi du fichier '.$_FILES['fichier'.$i]['name'].'<br>';
+      elseif ($_FILES['fichier'.$i]['size'] > $maxsize) echo 'Taille du fichier '.$_FILES['fichier'.$i]['name'].' trop grande<br>';
+      elseif (!in_array($ext,$extensions)) echo 'Extension du fichier '.$_FILES['fichier'.$i]['name'].' non pris en charge<br>';
+      else {
+        echo $_FILES['fichier'.$i]['name'].' good<br>';
+      }
     }
- }
-
-
-
-
-
-
-
-
-
-
+    echo $_FILES['fichier2']['size'].'<br>'.$maxsize;
+  }
 
 
 
