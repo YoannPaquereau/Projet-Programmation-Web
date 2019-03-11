@@ -24,7 +24,19 @@
   {
     die('erreur : '.$e->getmessage());
   }
-  $requete= $bdd->prepare("INSERT INTO annonces()")
+  $requete= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,nom)VALUES(:type,:ville,:prix,:date_publication,:nom) ")
+
+  // On exécute la requête avec nos valeurs
+  $req->execute(array(
+    'type' => $type,
+    'ville' => $ville,
+    'prix' => $prix,
+    'date_publication' => $date_publication,
+    'nom' => $nom
+  ));
+  echo" $nom vous avez ajoutez avec succès un fichier de  type $type, a $ville au prix $prix"<br><a href=\"pub_annonces.php\"> </a>";
+}
+
 
 
 
