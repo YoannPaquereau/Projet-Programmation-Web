@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  127.0.0.1
--- Généré le :  Lun 11 Mars 2019 à 11:30
+-- Généré le :  Ven 15 Mars 2019 à 18:36
 -- Version du serveur :  5.6.17
 -- Version de PHP :  5.5.12
 
@@ -37,19 +37,27 @@ CREATE TABLE IF NOT EXISTS `annonces` (
   `auteur` varchar(20) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_annonce`),
   KEY `proprietaire` (`auteur`)
+<<<<<<< HEAD
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
 
+=======
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=23 ;
+
+-- --------------------------------------------------------
+>>>>>>> Projet-Programmation-Web
 
 --
 -- Structure de la table `image`
 --
 
 CREATE TABLE IF NOT EXISTS `image` (
-  `id_image` int(11) NOT NULL,
+  `id_image` int(11) NOT NULL AUTO_INCREMENT,
   `nom_image` varchar(50) COLLATE utf8_bin NOT NULL,
   `annonce` int(11) NOT NULL,
-  PRIMARY KEY (`id_image`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  PRIMARY KEY (`id_image`),
+  KEY `annonce` (`annonce`),
+  KEY `annonce_2` (`annonce`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -69,11 +77,14 @@ CREATE TABLE IF NOT EXISTS `messages_prives` (
   KEY `expediteur` (`expediteur`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
 
+<<<<<<< HEAD
 --
 -- Contenu de la table `messages_prives`
 --
 
 
+=======
+>>>>>>> Projet-Programmation-Web
 -- --------------------------------------------------------
 
 --
@@ -91,7 +102,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`login`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Projet-Programmation-Web
 --
 -- Contraintes pour les tables exportées
 --
@@ -106,7 +120,7 @@ ALTER TABLE `annonces`
 -- Contraintes pour la table `image`
 --
 ALTER TABLE `image`
-  ADD CONSTRAINT `fk_image` FOREIGN KEY (`id_image`) REFERENCES `annonces` (`id_annonce`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_annonce` FOREIGN KEY (`annonce`) REFERENCES `annonces` (`id_annonce`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `messages_prives`
