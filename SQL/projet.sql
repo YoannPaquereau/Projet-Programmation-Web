@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  127.0.0.1
--- Généré le :  Lun 11 Mars 2019 à 11:30
+-- Généré le :  Ven 15 Mars 2019 à 18:36
 -- Version du serveur :  5.6.17
 -- Version de PHP :  5.5.12
 
@@ -37,14 +37,7 @@ CREATE TABLE IF NOT EXISTS `annonces` (
   `auteur` varchar(20) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_annonce`),
   KEY `proprietaire` (`auteur`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
-
---
--- Contenu de la table `annonces`
---
-
-INSERT INTO `annonces` (`id_annonce`, `type`, `nbr_votant`, `note`, `ville`, `prix`, `date_publication`, `auteur`) VALUES
-(1, 'maison', 0, 0, 'Amiens', '20', '2019-03-11 10:14:04', 'mama');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=23 ;
 
 -- --------------------------------------------------------
 
@@ -53,11 +46,13 @@ INSERT INTO `annonces` (`id_annonce`, `type`, `nbr_votant`, `note`, `ville`, `pr
 --
 
 CREATE TABLE IF NOT EXISTS `image` (
-  `id_image` int(11) NOT NULL,
+  `id_image` int(11) NOT NULL AUTO_INCREMENT,
   `nom_image` varchar(50) COLLATE utf8_bin NOT NULL,
   `annonce` int(11) NOT NULL,
-  PRIMARY KEY (`id_image`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  PRIMARY KEY (`id_image`),
+  KEY `annonce` (`annonce`),
+  KEY `annonce_2` (`annonce`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -77,14 +72,6 @@ CREATE TABLE IF NOT EXISTS `messages_prives` (
   KEY `expediteur` (`expediteur`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
 
---
--- Contenu de la table `messages_prives`
---
-
-INSERT INTO `messages_prives` (`id_message`, `expediteur`, `destinataire`, `titre`, `message`, `date_envoi`) VALUES
-(1, 'mama', 'mama', 'texte', 'dfcbgnh', '2019-03-08 14:28:25'),
-(2, 'mama', 'mama', 'texte', 'ddb n rf', '2019-03-08 14:39:52');
-
 -- --------------------------------------------------------
 
 --
@@ -103,13 +90,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
--- Contenu de la table `users`
---
-
-INSERT INTO `users` (`login`, `password`, `nom`, `prenom`, `date_naissance`, `date_inscription`, `derniere_connexion`) VALUES
-('mama', '$2y$10$tDwVmL.Qa3v.t6Vj9PoBOujb2am00qR9UnXNyc0q6.uuSKL9lEE1K', 'mama', 'mama', '2019-03-01', '2019-03-08 14:27:35', '2019-03-11 09:28:41');
-
---
 -- Contraintes pour les tables exportées
 --
 
@@ -123,7 +103,7 @@ ALTER TABLE `annonces`
 -- Contraintes pour la table `image`
 --
 ALTER TABLE `image`
-  ADD CONSTRAINT `fk_image` FOREIGN KEY (`id_image`) REFERENCES `annonces` (`id_annonce`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_annonce` FOREIGN KEY (`annonce`) REFERENCES `annonces` (`id_annonce`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `messages_prives`
