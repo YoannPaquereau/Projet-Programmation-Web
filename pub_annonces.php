@@ -15,10 +15,6 @@
   <?php
   if (isset($_FILES["fichier0"]))
   {
-<<<<<<< HEAD
-
-=======
->>>>>>> Projet-Programmation-Web
     include "register_login/myparam.inc.php";
 
     try
@@ -31,12 +27,8 @@
     }
 
     $req= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,auteur)
-<<<<<<< HEAD
-                           VALUES(:type,:ville,:prix,NOW(),:auteur) ");
-=======
                          VALUES(:type,:ville,:prix,NOW(),:auteur)");
 
->>>>>>> Projet-Programmation-Web
 
     // On exécute la requête avec nos valeurs
     $req->execute(array(
@@ -46,24 +38,6 @@
       'auteur' => $_SESSION["user"]
     ));
 
-<<<<<<< HEAD
-    echo $_SESSION['user'].' vous avez ajoutez avec succès un fichier de  type '.$_POST['type'].', a  '.$_POST['ville'].' au prix  '.$_POST['prix'].' <br>';
-    $maxsize = 10000000;
-    for ($i=0; $i<$_POST['nombre_images']; $i++) {
-      $extensions = array('png', 'gif', 'jpg', 'jpeg');
-      $ext = substr(strrchr($_FILES['fichier'.$i]['name'],'.'),1);
-
-      if ($_FILES['fichier'.$i]['error'] > 0) echo 'Echec de l\'envoi du fichier '.$_FILES['fichier'.$i]['name'].'<br>';
-      elseif ($_FILES['fichier'.$i]['size'] > $maxsize) echo 'Taille du fichier '.$_FILES['fichier'.$i]['name'].' trop grande<br>';
-      elseif (!in_array($ext,$extensions)) echo 'Extension du fichier '.$_FILES['fichier'.$i]['name'].' non pris en charge<br>';
-      else {
-        echo $_FILES['fichier'.$i]['name'].' good<br>';
-      }
-    }
-    echo $_FILES['fichier2']['size'].'<br>'.$maxsize;
-  }
-
-=======
     //echo $_SESSION['user'].' vous avez ajoutez avec succès une publication de  type '.$_POST['type'].', a  '.$_POST['ville'].' au prix  '.$_POST['prix'].' <br>';
 
     // On déclare une variable contenant la taille maximale acceptée pour une image (en octets)
@@ -123,11 +97,19 @@
             'nom_image' => $_FILES['fichier'.$i]['name'],
             'annonce' => $id
           ));
+
+          $dossier = "images/$id";
+          if (!is_dir($dossier)) {
+            mkdir($dossier, 0777);
+          }
+
+          $dossier = $dossier.'/'.$i.'.'.$ext;
+          $resultat = move_uploaded_file($_FILES['fichier'.$i]['tmp_name'], $dossier);
+          if ($resultat) echo "Transfert réussi";
        }
       }
     }
   }
->>>>>>> Projet-Programmation-Web
 
 
   elseif (isset($_POST["type"]) && isset($_POST["ville"]) && isset($_POST["prix"]) && isset($_POST["nombre_images"]))
