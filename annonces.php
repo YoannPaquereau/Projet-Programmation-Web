@@ -12,22 +12,59 @@
 
   <body>
 
-
     <?php
+    include "register_login/myparam.inc.php";
+
+    try
+    {
+      $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
+    }
+    catch(Exception $e)
+    {
+      die('erreur : '.$e->getmessage());
+    }
+
+    $req = $bdd->prepare('SELECT * FROM annonces');
+    $req->execute();
+    while ($donnees = $req->fetch()) {
+      echo 'Type : '.$donnees['type'];
+      echo '<br>Prix : '.$donnees['prix'].'€';
+      echo '<br>date_envoi : '.$donnees['date_publication'];
+      echo '<br>Auteur : '.$donnees['auteur'];
+      $id_annonce = $donnees['id_annonce'];
+      $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce');
+      $req2->execute(array(
+        'id_annonce' => $id_annonce
+      ));
+    while ($donnees2=$req2->fetch()){
+      $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
+      echo '<br><img src="'.$image.'">';
+    }
+
+
+
+    }
+
+
+
+
+
+
+
+
     if (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) { ?>
       <h1>Annonces</h1>
       <p>
         <form action="annonces.php" method="post">
-        Type: <select name="type">
-                <option value="maison">Maison</option>
-                <option value="studio">Studio</option>
-                <option value="appartement">Appartement</option>
-             </select><br>
-        Ville: <input type="text" name="ville" required><br>
-        Prix: <input type="number" name="prix" placeholder="Prix" step="0.01" min="20"  required><br>
-        Nombre image : <input type="number" name="nombre_images" min="1" max="8" required><br>
-        <input type="submit" value="Envoyer">
-
+          Type: <select name="type">
+                  <option value="maison">Maison</option>
+                  <option value="studio">Studio</option>
+                  <option value="appartement">Appartement</option>
+               </select><br>
+          Ville: <input type="text" name="ville" required><br>
+          Prix: <input type="number" name="prix" placeholder="Prix" step="0.01" min="20"  required><br>
+          Nombre image(s): <input type="number" name="nombre_images" min="1" max="8" required><br>
+          <input type="submit" value="Envoyer">
         </form>
       </p>
 
@@ -62,7 +99,6 @@
 
     elseif (isset($_FILES["fichier0"]))
     {
-      include "register_login/myparam.inc.php";
 
       try
       {
@@ -146,6 +182,7 @@
 
         for ($i=0; $i<$_POST['nombre_images']; $i++)
         {
+          $ext = strtolower(substr(strrchr($_FILES['fichier'.$i]['name'], '.'), 1));
 
           // On l'exécute
           $req->execute(array(
