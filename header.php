@@ -1,9 +1,10 @@
 <head>
   <meta charset="utf-8" />
+  <?php include "/Projet/register_login/myparam.inc.php"; ?>
   <link rel="stylesheet" type='text/css' href="/Projet/CSS/style.css" />
   <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet">
   <ul class="menu">
-    <li><a href="/Projet">Accueil</a></li>
+    <li><a href="/Projet/index.php">Accueil</a></li>
     <?php
     if (!isset($_SESSION['user'])) { ?>
       <li><a href="/Projet/register_login/register.php">Inscription</a></li>

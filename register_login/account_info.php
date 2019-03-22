@@ -15,8 +15,6 @@
 
   <body>
     <?php
-      // Inclusion des paramètres de connexion de notre BD
-      include_once("myparam.inc.php");
 
       // On accède à notre base de données
       try

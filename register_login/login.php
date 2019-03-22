@@ -24,8 +24,6 @@
           $user = $_POST['user'];
           $password = password_hash($_POST['password'], PASSWORD_DEFAULT);  // Hashage du mot de passe, pour pas à l'avoir en clair dans notre BD
 
-          // Inclusion des paramètres de connexion de notre BD
-          include_once("myparam.inc.php");
 
 
 
@@ -79,7 +77,7 @@
             $req->execute(array(
               'login' => $user
             ));
-            header('Location: /Projet/index.php');
+            header('Location: ../index.php');
           }
 
 
