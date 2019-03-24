@@ -11,9 +11,8 @@
   </head>
 
   <body>
-
+    <h1>Annonces</h1>
     <?php
-    include "register_login/myparam.inc.php";
 
     try
     {
@@ -36,13 +35,10 @@
       $req2->execute(array(
         'id_annonce' => $id_annonce
       ));
-    while ($donnees2=$req2->fetch()){
-      $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
-      echo '<br><img src="'.$image.'">';
-    }
-
-
-
+      while ($donnees2=$req2->fetch()){
+        $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
+        echo '<br><img src="'.$image.'">';
+      }
     }
 
 
@@ -53,15 +49,20 @@
 
 
     if (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) { ?>
-      <h1>Annonces</h1>
       <p>
         <form action="annonces.php" method="post">
           Type: <select name="type">
-                  <option value="maison">Maison</option>
-                  <option value="studio">Studio</option>
-                  <option value="appartement">Appartement</option>
+                  <option value="Maison">Maison</option>
+                  <option value="Studio">Studio</option>
+                  <option value="Appartement">Appartement</option>
                </select><br>
-          Ville: <input type="text" name="ville" required><br>
+          Ville: <select name="ville">
+                    <option value="Amiens">Amiens</option>
+                    <option value="Paris">Paris</option>
+                    <option value="Lille">Lille</option>
+                    <option value="Rennes">Rennes</option>
+                    <option value="Bordeaux">Bordeaux</option>
+                </select><br>
           Prix: <input type="number" name="prix" placeholder="Prix" step="0.01" min="20"  required><br>
           Nombre image(s): <input type="number" name="nombre_images" min="1" max="8" required><br>
           <input type="submit" value="Envoyer">

@@ -12,7 +12,7 @@
   <body>
     <p>
       <?php
-        if (!isset($_SESSION['user'])) echo "Vous n'&ecirc;tes pas connect&eacute;<br/><a href=\"/Projet/register_login/login.php\">Connexion</a>";
+        if (!isset($_SESSION['user'])) echo 'Vous n\'&ecirc;tes pas connect&eacute;<br/><a href="register_login/login.php\">Connexion</a>';
         else echo 'Bonjour '.$_SESSION['user'];
       ?>
     </p>

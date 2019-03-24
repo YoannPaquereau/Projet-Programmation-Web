@@ -1,5 +1,6 @@
 <?php
   session_start();
   session_destroy();
-  header('Location: /Projet/index.php');
+  include_once("myparam.inc.php");
+  header('Location: ../index.php');
 ?>
