@@ -25,7 +25,7 @@
           $password = password_hash($_POST['password'], PASSWORD_DEFAULT);  // Hashage du mot de passe, pour pas à l'avoir en clair dans notre BD
 
 
-
+          require "myparam.inc.php";
 
           // On accède à notre base de données
           try

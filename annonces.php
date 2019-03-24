@@ -14,32 +14,11 @@
     <h1>Annonces</h1>
     <?php
 
-    try
-    {
-      $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
-    }
-    catch(Exception $e)
-    {
-      die('erreur : '.$e->getmessage());
-    }
 
-    $req = $bdd->prepare('SELECT * FROM annonces');
-    $req->execute();
-    while ($donnees = $req->fetch()) {
-      echo 'Type : '.$donnees['type'];
-      echo '<br>Prix : '.$donnees['prix'].'€';
-      echo '<br>date_envoi : '.$donnees['date_publication'];
-      echo '<br>Auteur : '.$donnees['auteur'];
-      $id_annonce = $donnees['id_annonce'];
-      $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce');
-      $req2->execute(array(
-        'id_annonce' => $id_annonce
-      ));
-      while ($donnees2=$req2->fetch()){
-        $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
-        echo '<br><img src="'.$image.'">';
-      }
-    }
+
+    require "register_login/myparam.inc.php";
+
+
 
 
 
@@ -50,6 +29,34 @@
 
     if (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) { ?>
       <p>
+        <?php
+        try
+        {
+          $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
+        }
+        catch(Exception $e)
+        {
+          die('erreur : '.$e->getmessage());
+        }
+
+        $req = $bdd->prepare('SELECT * FROM annonces');
+        $req->execute();
+        while ($donnees = $req->fetch()) {
+          echo 'Type : '.$donnees['type'];
+          echo '<br>Prix : '.$donnees['prix'].'€';
+          echo '<br>date_envoi : '.$donnees['date_publication'];
+          echo '<br>Auteur : '.$donnees['auteur'];
+          $id_annonce = $donnees['id_annonce'];
+          $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce');
+          $req2->execute(array(
+            'id_annonce' => $id_annonce
+          ));
+          while ($donnees2=$req2->fetch()){
+            $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
+            echo '<br><img src="'.$image.'">';
+          }
+        }
+        ?>
         <form action="annonces.php" method="post">
           Type: <select name="type">
                   <option value="Maison">Maison</option>

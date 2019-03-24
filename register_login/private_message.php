@@ -12,6 +12,8 @@
     <p>
       <?php
 
+      require "myparam.inc.php";
+
 
       // On accède à notre base de données
       try

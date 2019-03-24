@@ -1,6 +1,5 @@
 <head>
   <meta charset="utf-8" />
-  <?php include "/Projet/register_login/myparam.inc.php"; ?>
   <link rel="stylesheet" type='text/css' href="/Projet/CSS/style.css" />
   <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet">
   <ul class="menu">

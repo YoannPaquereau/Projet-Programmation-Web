@@ -32,6 +32,7 @@
           $date_naissance = $_POST['date'];
 
 
+          require "myparam.inc.php";
 
           // On accède à notre base de données
           try
@@ -55,7 +56,7 @@
             'date_naissance' => $date_naissance
           ));
 
-          echo "Inscription de $user réussie<br><a href=\"../login.php\">Se connecter</a>";
+          echo "Inscription de $user réussie<br><a href=\"login.php\">Se connecter</a>";
         }
       }
       else echo "Error<br />Page not found";
