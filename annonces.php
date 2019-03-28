@@ -41,8 +41,11 @@
 
         $req = $bdd->prepare('SELECT * FROM annonces');
         $req->execute();
+        echo '<ul class="annonce">';
         while ($donnees = $req->fetch()) {
+          echo '<li>';
           echo 'Type : '.$donnees['type'];
+          echo '<br>Ville :'.$donnees['ville'];
           echo '<br>Prix : '.$donnees['prix'].'€';
           echo '<br>date_envoi : '.$donnees['date_publication'];
           echo '<br>Auteur : '.$donnees['auteur'];
@@ -51,12 +54,14 @@
           $req2->execute(array(
             'id_annonce' => $id_annonce
           ));
-          while ($donnees2=$req2->fetch()){
-            $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
-            echo '<br><img src="'.$image.'">';
-          }
+          $donnees2=$req2->fetch();
+          $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
+          echo '<br><img src="'.$image.'"width="400" height="200"><br>';
+          echo '</li>';
         }
+        echo '</ul>';
         ?>
+
         <form action="annonces.php" method="post">
           Type: <select name="type">
                   <option value="Maison">Maison</option>
