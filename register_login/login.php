@@ -9,7 +9,8 @@
     <title>ShareMyHouse - Connexion</title>
   </head>
   <body>
-
+    <?php
+      if (!isset($_SESSION['user'])) { ?>
     <p>
       <form action="login.php" method="post">
         <label for="user">Nom d'utilisateur :</label><input type="text" name="user" required><br>
@@ -77,13 +78,17 @@
             $req->execute(array(
               'login' => $user
             ));
-            header('Location: ../index.php');
+            header('Location: /Projet');
           }
 
 
 
           echo $message;
         }
+      }
+      else {
+        echo "Error<br>Page not found";
+      }
       ?>
 
     </p>

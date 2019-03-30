@@ -7,6 +7,7 @@
   <?php
     require "header.php"
   ?>
+    <link rel="stylesheet" type='text/css' href="/Projet/CSS/annonce.css" />
     <title>Annonces</title>
   </head>
 
@@ -14,20 +15,35 @@
     <h1>Annonces</h1>
     <?php
 
-
-
     require "register_login/myparam.inc.php";
 
+    if (isset($_GET['annonce'])) {
+      try
+      {
+        $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
+      }
+      catch(Exception $e)
+      {
+        die('erreur : '.$e->getmessage());
+      }
+
+      $req = $bdd->prepare('SELECT * FROM annonces WHERE id_annonce=:id');
+      $req->execute(array(
+        'id' => $_GET['annonce']
+      ));
+
+      $donnees = $req->fetch();
+
+      echo 'Type : '.$donnees['type'];
+      echo '<br>Ville :'.$donnees['ville'];
+      echo '<br>Prix : '.$donnees['prix'].'€';
+      echo '<br>date_envoi : '.$donnees['date_publication'];
+      echo '<br>Auteur : '.$donnees['auteur'];
+      $req->CloseCursor();
+    }
 
 
-
-
-
-
-
-
-
-    if (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) { ?>
+    elseif (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) { ?>
       <p>
         <?php
         try
@@ -43,7 +59,7 @@
         $req->execute();
         echo '<ul class="annonce">';
         while ($donnees = $req->fetch()) {
-          echo '<li>';
+          echo '<li><a href="?annonce='.$donnees['id_annonce'].'">';
           echo 'Type : '.$donnees['type'];
           echo '<br>Ville :'.$donnees['ville'];
           echo '<br>Prix : '.$donnees['prix'].'€';
@@ -57,7 +73,7 @@
           $donnees2=$req2->fetch();
           $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
           echo '<br><img src="'.$image.'"width="400" height="200"><br>';
-          echo '</li>';
+          echo '</a></li>';
         }
         echo '</ul>';
         ?>
