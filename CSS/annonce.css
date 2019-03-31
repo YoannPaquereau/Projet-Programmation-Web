@@ -1,4 +1,32 @@
-.annonce li {
-  display: block;
-  margin-right: 1px ;
+.liste_annonces a {
+  color: black;
+  text-decoration: none;
+}
+
+.liste_annonces li {
+  margin: 10;
+  padding: 7;
+  width: 420px;
+  height: 315px;
+  border: 1px solid #000;
+  border-radius: 1em;
+}
+
+.liste_annonces li a:hover, .menu li a:focus, .menu li a:active {
+  text-decoration: underline;
+}
+
+.liste_annonces li {
+  display: inline-flex;
+  position: relative;
+}
+
+.liste_annonces a:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0);
 }

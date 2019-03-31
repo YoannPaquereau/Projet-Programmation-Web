@@ -57,13 +57,13 @@
 
         $req = $bdd->prepare('SELECT * FROM annonces');
         $req->execute();
-        echo '<ul class="annonce">';
+
+        echo '<ul class="liste_annonces">';
         while ($donnees = $req->fetch()) {
           echo '<li><a href="?annonce='.$donnees['id_annonce'].'">';
           echo 'Type : '.$donnees['type'];
           echo '<br>Ville :'.$donnees['ville'];
           echo '<br>Prix : '.$donnees['prix'].'€';
-          echo '<br>date_envoi : '.$donnees['date_publication'];
           echo '<br>Auteur : '.$donnees['auteur'];
           $id_annonce = $donnees['id_annonce'];
           $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce');
@@ -75,8 +75,9 @@
           echo '<br><img src="'.$image.'"width="400" height="200"><br>';
           echo '</a></li>';
         }
-        echo '</ul>';
+        echo '</ul><br><br>';
         ?>
+
 
         <form action="annonces.php" method="post">
           Type: <select name="type">
