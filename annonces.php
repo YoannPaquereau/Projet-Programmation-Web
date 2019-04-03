@@ -57,6 +57,8 @@
 
 
 
+
+
       $req->CloseCursor();
     }
 
@@ -94,6 +96,14 @@
           echo '</a></li>';
         }
         echo '</ul><br><br>';
+
+        $datemin= date("Y-m-d");
+        $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
+
+        echo date("Y-m-d", strtotime($datemax));
+
+        $datemin2 = date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 day"));
+        $datemax2= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemax)) . " +1 day"));
         ?>
 
 
@@ -111,6 +121,10 @@
                     <option value="Bordeaux">Bordeaux</option>
                 </select><br>
           Prix: <input type="number" name="prix" placeholder="Prix" step="0.01" min="20"  required><br>
+
+          Date de debut: <input type ="date" name="datedebut" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required><br>
+
+          Date de fin: <input type ="date" name="datefin"min="<?php echo $datemin2;?>" max="<?php echo $datemax2;?>" required><br>
           Nombre image(s): <input type="number" name="nombre_images" min="1" max="8" required><br>
           <input type="submit" value="Envoyer">
         </form>
@@ -123,10 +137,18 @@
 
     elseif (!isset($_FILES['fichier0']))
     {
+      $datedebut= $_POST["datedebut"];
+      $datefin= $_POST["datefin"];
+
+      if ((strtotime($datedebut) >= strtotime($datefin))) echo("ERREUR,Date de fin antérieur à la date de debut") ;
+      else{
+
       $type = $_POST["type"];
       $ville = $_POST["ville"];
       $prix = $_POST["prix"];
       $nbr_images = $_POST["nombre_images"];
+
+
       ?>
       <form method="post" action="annonces.php" enctype="multipart/form-data">
         <?php
@@ -137,11 +159,14 @@
         <input type="hidden" name="type" value="<?php echo $type; ?>">
         <input type="hidden" name="ville" value="<?php echo $ville; ?>">
         <input type="hidden" name="prix" value="<?php echo $prix; ?>">
+        <input type="hidden" name="datedebut" value="<?php echo $datedebut;?>">
+        <input type ="hidden" name="datefin" value="<?php echo $datefin;?>">
         <input type="hidden" name="nombre_images" value="<?php echo $nbr_images; ?>">
         <input type="submit" value="Envoyer">
 
     <?php
     }
+  }
 
 
 
@@ -190,8 +215,8 @@
 
       if (!isset($good)) {
 
-        $req= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,auteur)
-                             VALUES(:type,:ville,:prix,NOW(),:auteur)");
+        $req= $bdd->prepare("INSERT INTO annonces(type,ville,prix,date_publication,auteur,date_dispo_debut, date_dispo_fin)
+                             VALUES(:type,:ville,:prix,NOW(),:auteur,:datedebut,:datefin)");
 
 
         // On exécute la requête avec nos valeurs
@@ -199,19 +224,24 @@
           'type' => $_POST["type"],
           'ville' => $_POST["ville"],
           'prix' => $_POST["prix"],
-          'auteur' => $_SESSION["user"]
+          'auteur' => $_SESSION["user"],
+          'datedebut'=> $_POST["datedebut"],
+          'datefin'=> $_POST["datefin"]
         ));
 
         // On prépare notre requête permettant de récupérer l'ID de notre annonce (qui est en Auto-Incrémentation)
         $req= $bdd->prepare("SELECT id_annonce FROM annonces
-                             WHERE type=:type AND ville=:ville AND prix=:prix AND auteur=:auteur");
+                             WHERE type=:type AND ville=:ville AND prix=:prix AND
+                             auteur=:auteur AND date_dispo_debut=:datedebut AND date_dispo_fin=:datefin");
 
         // On l'exécute
         $req->execute(array(
           'type' => $_POST["type"],
           'ville' => $_POST["ville"],
           'prix' => $_POST["prix"],
-          'auteur' => $_SESSION["user"]
+          'auteur' => $_SESSION["user"],
+          'datedebut'=> $_POST["datedebut"],
+          'datefin'=> $_POST["datefin"]
         ));
 
         // On met le résultat dans une variable
