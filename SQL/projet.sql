@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.4
+-- version 4.8.5
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le :  jeu. 21 mars 2019 à 22:38
--- Version du serveur :  10.1.37-MariaDB
--- Version de PHP :  7.3.1
+-- Hôte : localhost
+-- Généré le :  mer. 03 avr. 2019 à 18:53
+-- Version du serveur :  10.1.38-MariaDB
+-- Version de PHP :  7.3.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -36,7 +36,9 @@ CREATE TABLE `annonces` (
   `ville` varchar(50) COLLATE utf8_bin NOT NULL,
   `prix` decimal(10,0) NOT NULL,
   `date_publication` datetime NOT NULL,
-  `auteur` varchar(20) COLLATE utf8_bin NOT NULL
+  `auteur` varchar(20) COLLATE utf8_bin NOT NULL,
+  `date_dispo_debut` date NOT NULL,
+  `date_dispo_fin` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -64,6 +66,21 @@ CREATE TABLE `messages_prives` (
   `titre` varchar(40) COLLATE utf8_bin NOT NULL,
   `message` text COLLATE utf8_bin NOT NULL,
   `date_envoi` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reservation`
+--
+
+CREATE TABLE `reservation` (
+  `id_reservation` int(11) NOT NULL,
+  `client` varchar(20) COLLATE utf8_bin NOT NULL,
+  `auteur` varchar(20) COLLATE utf8_bin NOT NULL,
+  `date_debut` date NOT NULL,
+  `date_fin` date NOT NULL,
+  `annonce` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -110,6 +127,15 @@ ALTER TABLE `messages_prives`
   ADD KEY `expediteur` (`expediteur`);
 
 --
+-- Index pour la table `reservation`
+--
+ALTER TABLE `reservation`
+  ADD PRIMARY KEY (`id_reservation`),
+  ADD KEY `fk_client` (`client`),
+  ADD KEY `fk_auteur` (`auteur`),
+  ADD KEY `fk_annonce_resa` (`annonce`);
+
+--
 -- Index pour la table `users`
 --
 ALTER TABLE `users`
@@ -138,6 +164,12 @@ ALTER TABLE `messages_prives`
   MODIFY `id_message` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pour la table `reservation`
+--
+ALTER TABLE `reservation`
+  MODIFY `id_reservation` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Contraintes pour les tables déchargées
 --
 
@@ -159,6 +191,14 @@ ALTER TABLE `image`
 ALTER TABLE `messages_prives`
   ADD CONSTRAINT `messages_prives_ibfk_1` FOREIGN KEY (`destinataire`) REFERENCES `users` (`login`),
   ADD CONSTRAINT `messages_prives_ibfk_2` FOREIGN KEY (`expediteur`) REFERENCES `users` (`login`);
+
+--
+-- Contraintes pour la table `reservation`
+--
+ALTER TABLE `reservation`
+  ADD CONSTRAINT `fk_annonce_resa` FOREIGN KEY (`annonce`) REFERENCES `annonces` (`id_annonce`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_auteur` FOREIGN KEY (`auteur`) REFERENCES `users` (`login`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_client` FOREIGN KEY (`client`) REFERENCES `users` (`login`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
