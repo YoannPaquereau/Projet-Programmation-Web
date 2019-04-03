@@ -39,6 +39,24 @@
       echo '<br>Prix : '.$donnees['prix'].'€';
       echo '<br>date_envoi : '.$donnees['date_publication'];
       echo '<br>Auteur : '.$donnees['auteur'];
+
+      $req->CloseCursor();
+      $req = $bdd->prepare('SELECT nom_image FROM image WHERE annonce = :id');
+
+      $req->execute(array(
+        'id' => $_GET['annonce']
+      ));
+
+
+      $dossier = 'images/'.$_GET['annonce'].'/';
+      echo '<ul>';
+      while($donnees = $req->fetch()) {
+        echo '<li><img src="'.$dossier.$donnees['nom_image'].'"width="400" height="200"></li>';
+      }
+      echo '</ul>';
+
+
+
       $req->CloseCursor();
     }
 
