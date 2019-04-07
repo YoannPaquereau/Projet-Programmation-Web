@@ -100,7 +100,6 @@
         $datemin= date("Y-m-d");
         $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
 
-        echo date("Y-m-d", strtotime($datemax));
 
         $datemin2 = date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 day"));
         $datemax2= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemax)) . " +1 day"));
