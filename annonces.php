@@ -14,6 +14,36 @@
   <body>
     <h1>Annonces</h1>
     <?php
+    $datemin = date("Y-m-d");
+    $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
+    ?>
+    <form action='annonces.php' method="post">
+       <select name="recherche_ville">
+                <option value="Amiens">Amiens</option>
+                <option value="Paris">Paris</option>
+                <option value="Lille">Lille</option>
+                <option value="Rennes">Rennes</option>
+                <option value="Bordeaux">Bordeaux</option>
+            </select>
+           <select name="recherche_type">
+                    <option value="Maison">Maison</option>
+                    <option value="Studio">Studio</option>
+                    <option value="Appartement">Appartement</option>
+                 </select>
+                  <input type="number" name="recherche_prix" placeholder="Prix" step="0.01" min="20"  required>
+
+                  <input type ="date" name="recherche_datedebut" value="<?php echo $datemin;?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
+
+                  <input type ="date" name="recherche_datefin" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
+                  <input type="submit" name="submit" value="Rechercher">
+
+
+
+
+    </form>
+    <?php
+
+
 
     require "register_login/myparam.inc.php";
 
@@ -75,8 +105,21 @@
           die('erreur : '.$e->getmessage());
         }
 
-        $req = $bdd->prepare('SELECT * FROM annonces');
-        $req->execute();
+        $req = $bdd->prepare('SELECT * FROM annonces, reservation
+                              WHERE prix <=:prix
+                              AND type=:type
+                              AND ville=:ville
+                              AND date_dispo_debut > :recherche_datedebut
+                              AND :recherche_datedebut NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)
+                              AND date_dispo_fin <= :recherche_datefin
+                              AND :recherche_datefin NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)');
+        $req->execute(array(
+          'prix' => $_POST['recherche_prix'],
+          'ville' => $_POST['recherche_ville'],
+          'type' => $_POST['recherche_type'],
+          'recherche_datedebut' => $_POST['recherche_datedebut'],
+          'recherche_datefin' => $_POST['recherche_datefin']
+        ));
 
         echo '<ul class="liste_annonces">';
         while ($donnees = $req->fetch()) {
