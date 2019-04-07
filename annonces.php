@@ -14,36 +14,6 @@
   <body>
     <h1>Annonces</h1>
     <?php
-    $datemin = date("Y-m-d");
-    $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
-    ?>
-    <form action='annonces.php' method="post">
-       <select name="recherche_ville">
-                <option value="Amiens">Amiens</option>
-                <option value="Paris">Paris</option>
-                <option value="Lille">Lille</option>
-                <option value="Rennes">Rennes</option>
-                <option value="Bordeaux">Bordeaux</option>
-            </select>
-           <select name="recherche_type">
-                    <option value="Maison">Maison</option>
-                    <option value="Studio">Studio</option>
-                    <option value="Appartement">Appartement</option>
-                 </select>
-                  <input type="number" name="recherche_prix" placeholder="Prix" step="0.01" min="20"  required>
-
-                  <input type ="date" name="recherche_datedebut" value="<?php echo $datemin;?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
-
-                  <input type ="date" name="recherche_datefin" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
-                  <input type="submit" name="submit" value="Rechercher">
-
-
-
-
-    </form>
-    <?php
-
-
 
     require "register_login/myparam.inc.php";
 
@@ -93,9 +63,47 @@
     }
 
 
-    elseif (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) { ?>
+    elseif (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) {
+      $datemin= date("Y-m-d");
+      $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
+      ?>
       <p>
         <?php
+          if (isset($_POST['recherche_ville'])) {
+            $ville = $_POST['recherche_ville'];
+            $prix = $_POST['recherche_prix'];
+            $type = $_POST['recherche_type'];
+            $datedebut = $_POST['recherche_datedebut'];
+            $datefin = $_POST['recherche_datefin'];
+          } ?>
+
+        <form action='annonces.php' method="post">
+          <select name="recherche_ville">
+            <option value="<?php if (isset($ville)) echo $ville; ?>"><?php echo (isset($ville) ? $ville : 'Ville');?></option>
+            <option value="Amiens">Amiens</option>
+            <option value="Paris">Paris</option>
+            <option value="Lille">Lille</option>
+            <option value="Rennes">Rennes</option>
+            <option value="Bordeaux">Bordeaux</option>
+          </select>
+
+          <select name="recherche_type">
+            <option value="<?php if (isset($type)) echo $type; ?>"><?php echo (isset($type) ? $type : 'Type de logement');?></option>
+            <option value="Maison">Maison</option>
+            <option value="Studio">Studio</option>
+            <option value="Appartement">Appartement</option>
+          </select>
+
+          <input type="number" name="recherche_prix" <?php if (isset($_POST['recherche_prix'])) echo 'value="'.$_POST['recherche_prix'].'"'; else echo 'placeholder="Prix maximum"';?>  step="0.01" min="20"  required>
+          <input type ="date" name="recherche_datedebut" value="<?php echo (isset($datedebut) ? $datedebut : $datemin);?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
+          <input type ="date" name="recherche_datefin" value="<?php echo (isset($datefin) ? $datefin : $datemax);?>"    min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
+          <input type="submit" name="submit" value="Rechercher">
+        </form>
+
+
+
+        <?php
+
         try
         {
           $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
@@ -105,25 +113,33 @@
           die('erreur : '.$e->getmessage());
         }
 
-        $req = $bdd->prepare('SELECT * FROM annonces, reservation
-                              WHERE prix <=:prix
-                              AND type=:type
-                              AND ville=:ville
-                              AND date_dispo_debut > :recherche_datedebut
-                              AND :recherche_datedebut NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)
-                              AND date_dispo_fin <= :recherche_datefin
-                              AND :recherche_datefin NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)');
-        $req->execute(array(
-          'prix' => $_POST['recherche_prix'],
-          'ville' => $_POST['recherche_ville'],
-          'type' => $_POST['recherche_type'],
-          'recherche_datedebut' => $_POST['recherche_datedebut'],
-          'recherche_datefin' => $_POST['recherche_datefin']
-        ));
+        if (isset($_POST['recherche_prix'])) {
+          $req = $bdd->prepare('SELECT * FROM annonces
+                                WHERE prix <=:prix
+                                AND type=:type
+                                AND ville=:ville');
+                                /*AND date_dispo_debut > :recherche_datedebut
+                                AND :recherche_datedebut NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)
+                                AND date_dispo_fin <= :recherche_datefin
+                                AND :recherche_datefin NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)');*/
+          $req->execute(array(
+            'prix' => $_POST['recherche_prix'],
+            'ville' => $_POST['recherche_ville'],
+            'type' => $_POST['recherche_type']
+            /*'recherche_datedebut' => $_POST['recherche_datedebut'],
+            'recherche_datefin' => $_POST['recherche_datefin']*/
+          ));
+        }
+        else {
+          $req = $bdd->prepare('SELECT * FROM annonces');
+
+          $req->execute();
+        }
 
         echo '<ul class="liste_annonces">';
         while ($donnees = $req->fetch()) {
-          echo '<li><a href="?annonce='.$donnees['id_annonce'].'">';
+          if (isset($datedebut)) echo '<li><a href="?annonce='.$donnees['id_annonce'].'&datedebut='.$datedebut.'&datefin='.$datefin.'">';
+          else echo '<li><a href="?annonce='.$donnees['id_annonce'].'">';
           echo 'Type : '.$donnees['type'];
           echo '<br>Ville :'.$donnees['ville'];
           echo '<br>Prix : '.$donnees['prix'].'€';
@@ -140,8 +156,7 @@
         }
         echo '</ul><br><br>';
 
-        $datemin= date("Y-m-d");
-        $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
+
 
 
         $datemin2 = date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 day"));
@@ -198,13 +213,13 @@
         { ?>
           <input type="file" name="fichier<?php echo $i;?>" required><br><?php
         } ?>
-        <input type="hidden" name="type" value="<?php echo $type; ?>">
-        <input type="hidden" name="ville" value="<?php echo $ville; ?>">
-        <input type="hidden" name="prix" value="<?php echo $prix; ?>">
-        <input type="hidden" name="datedebut" value="<?php echo $datedebut;?>">
-        <input type ="hidden" name="datefin" value="<?php echo $datefin;?>">
-        <input type="hidden" name="nombre_images" value="<?php echo $nbr_images; ?>">
-        <input type="submit" value="Envoyer">
+        <input type = "hidden" name = "type" value = "<?php echo $type; ?>">
+        <input type = "hidden" name = "ville" value = "<?php echo $ville; ?>">
+        <input type = "hidden" name = "prix" value = "<?php echo $prix; ?>">
+        <input type = "hidden" name = "datedebut" value = "<?php echo $datedebut;?>">
+        <input type = "hidden" name = "datefin" value = "<?php echo $datefin;?>">
+        <input type = "hidden" name = "nombre_images" value = "<?php echo $nbr_images; ?>">
+        <input type = "submit" value = "Envoyer">
 
     <?php
     }
