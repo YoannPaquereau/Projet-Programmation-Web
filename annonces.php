@@ -14,8 +14,74 @@
   <body>
     <h1>Annonces</h1>
     <?php
-
     require "register_login/myparam.inc.php";
+
+
+
+    function estDispo($id_annonce, $dateDebut, $dateFin) {
+      try
+      {
+        $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
+      }
+      catch(Exception $e)
+      {
+        die('erreur : '.$e->getmessage());
+      }
+
+      $date_traite = $dateDebut;
+      $recherche_resa = "SELECT annonce FROM reservation WHERE '$date_traite' BETWEEN date_debut AND date_fin";
+      while ($date_traite < $dateFin) {
+        $date_traite = date("Y-m-d", strtotime(date("Y-m-d", strtotime($date_traite)) . " +1 day"));
+        $recherche_resa = "$recherche_resa OR '$date_traite' BETWEEN date_debut AND date_fin";
+      }
+
+      $req = $bdd->prepare("SELECT COUNT(*) AS nbr FROM annonces
+                            WHERE id_annonce = :id
+                            AND date_dispo_debut <= :recherche_datedebut
+                            AND date_dispo_fin >= :recherche_datefin AND id_annonce IN ($recherche_resa)");
+
+      $req->execute(array(
+        'id' => $id_annonce,
+        'recherche_datedebut' => $dateDebut,
+        'recherche_datefin' => $dateFin
+      ));
+
+      $donnees = $req->fetch();
+      $req->closeCursor();
+
+      if ($donnees['nbr'] == 0) return true;
+      else return false;
+    }
+
+
+    function afficheAnnonces($donnees) {
+      try
+      {
+        $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
+      }
+      catch(Exception $e)
+      {
+        die('erreur : '.$e->getmessage());
+      }
+
+        if (isset($_POST['recherche_datedebut'])) echo '<li><a href="?annonce='.$donnees['id_annonce'].'&datedebut='.$_POST['recherche_datedebut'].'&datefin='.$_POST['recherche_datefin'].'">';
+        else echo '<li><a href="?annonce='.$donnees['id_annonce'].'">';
+        echo 'Type : '.$donnees['type'];
+        echo '<br>Ville :'.$donnees['ville'];
+        echo '<br>Prix : '.$donnees['prix'].'€';
+        echo '<br>Auteur : '.$donnees['auteur'];
+        $id_annonce = $donnees['id_annonce'];
+        $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce');
+        $req2->execute(array(
+          'id_annonce' => $id_annonce
+        ));
+        $donnees2=$req2->fetch();
+        $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
+        echo '<br><img src="'.$image.'"width="400" height="200"><br>';
+        echo '</a></li>';
+    }
+
+
 
     if (isset($_GET['annonce'])) {
       try
@@ -27,40 +93,69 @@
         die('erreur : '.$e->getmessage());
       }
 
-      $req = $bdd->prepare('SELECT * FROM annonces WHERE id_annonce=:id');
-      $req->execute(array(
-        'id' => $_GET['annonce']
-      ));
 
-      $donnees = $req->fetch();
+      if (isset($_POST['resa_debut'])) {
+        if (estDispo($_GET['annonce'], $_POST['resa_debut'], $_POST['resa_fin'])) {
+          $req = $bdd->prepare('INSERT INTO reservation(client, auteur, date_debut, date_fin, annonce)
+                                VALUES (:client, :auteur, :date_debut, :date_fin, :annonce)');
 
-      echo 'Type : '.$donnees['type'];
-      echo '<br>Ville :'.$donnees['ville'];
-      echo '<br>Prix : '.$donnees['prix'].'€';
-      echo '<br>date_envoi : '.$donnees['date_publication'];
-      echo '<br>Auteur : '.$donnees['auteur'];
+          $req->execute(array(
+            'client' => $_SESSION['user'],
+            'auteur' => $_POST['resa_auteur'],
+            'date_debut' => $_POST['resa_debut'],
+            'date_fin' => $_POST['resa_fin'],
+            'annonce' => $_GET['annonce']
+          ));
 
-      $req->CloseCursor();
-      $req = $bdd->prepare('SELECT nom_image FROM image WHERE annonce = :id');
-
-      $req->execute(array(
-        'id' => $_GET['annonce']
-      ));
-
-
-      $dossier = 'images/'.$_GET['annonce'].'/';
-      echo '<ul>';
-      while($donnees = $req->fetch()) {
-        echo '<li><img src="'.$dossier.$donnees['nom_image'].'"width="400" height="200"></li>';
+          header('Refresh:3;url=annonces.php');
+          echo 'Annonce r&eacute;serv&eacute;e !<br><br>Redirection dans 3 secondes...<br>Trop long ? <a href="annonces.php">Clique ici</a>';
+        } else {
+          header('Refresh:3;url=annonces.php?annonce='.$_GET['annonce']);
+          echo "Date de r&eacute;servation non valide. Veuillez r&eacuteessayer";
+        }
       }
-      echo '</ul>';
+      else {
 
 
+        $req = $bdd->prepare('SELECT * FROM annonces WHERE id_annonce=:id');
+        $req->execute(array(
+          'id' => $_GET['annonce']
+        ));
+
+        $donnees = $req->fetch();
+        $auteur = $donnees['auteur'];
+
+        echo 'Type : '.$donnees['type'];
+        echo '<br>Ville :'.$donnees['ville'];
+        echo '<br>Prix : '.$donnees['prix'].'€';
+        echo '<br>Auteur : '.$donnees['auteur'].' (<a href="/Projet/register_login/private_message.php">Contacter l\'auteur</a>)';
+
+        $req->CloseCursor();
+        $req = $bdd->prepare('SELECT nom_image FROM image WHERE annonce = :id');
+
+        $req->execute(array(
+          'id' => $_GET['annonce']
+        ));
 
 
+        $dossier = 'images/'.$_GET['annonce'].'/';
+        echo '<ul class="annonce">';
+        while($donnees = $req->fetch()) {
+          echo '<li><img src="'.$dossier.$donnees['nom_image'].'"width="400" height="200"></li>';
+        }
+        echo '</ul>';
 
-      $req->CloseCursor();
-    }
+        $req->CloseCursor();
+
+        ?>
+        <h2>Réserver</h2>
+        <form action="annonces.php?annonce=<?php echo $_GET['annonce'];?>" method="post" class="reservation">
+          Date de d&eacute;but : <input type="date" name="resa_debut" value="<?php echo (isset($_GET['datedebut'])) ? $_GET['datedebut'] : $datemin;?>" required><br>
+          Date de fin : <input type="date" name="resa_fin" value="<?php echo (isset($_GET['datefin'])) ? $_GET['datefin'] : $datemin;?>" required><br>
+          <input type="hidden" name="resa_auteur" value="<?php echo $auteur;?>">
+          <input type="submit" value="Réserver">
+        </form>
+    <?php } }
 
 
     elseif (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) {
@@ -94,9 +189,9 @@
             <option value="Appartement">Appartement</option>
           </select>
 
-          <input type="number" name="recherche_prix" <?php if (isset($_POST['recherche_prix'])) echo 'value="'.$_POST['recherche_prix'].'"'; else echo 'placeholder="Prix maximum"';?>  step="0.01" min="20"  required>
+          <input type="number" name="recherche_prix" <?php if (isset($_POST['recherche_prix'])) echo 'value="'.$_POST['recherche_prix'].'"'; else echo 'placeholder="Prix maximum"';?>  step="1" min="20"  required>
           <input type ="date" name="recherche_datedebut" value="<?php echo (isset($datedebut) ? $datedebut : $datemin);?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
-          <input type ="date" name="recherche_datefin" value="<?php echo (isset($datefin) ? $datefin : $datemax);?>"    min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
+          <input type ="date" name="recherche_datefin" value="<?php echo (isset($datefin) ? $datefin : $datemin);?>"    min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
           <input type="submit" name="submit" value="Rechercher">
         </form>
 
@@ -114,47 +209,46 @@
         }
 
         if (isset($_POST['recherche_prix'])) {
-          $req = $bdd->prepare('SELECT * FROM annonces
+
+
+          $req = $bdd->prepare("SELECT * FROM annonces
                                 WHERE prix <=:prix
-                                AND type=:type
-                                AND ville=:ville');
-                                /*AND date_dispo_debut > :recherche_datedebut
-                                AND :recherche_datedebut NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)
-                                AND date_dispo_fin <= :recherche_datefin
-                                AND :recherche_datefin NOT BETWEEN(SELECT date_debut FROM reservation) AND (SELECT date_fin FROM reservation)');*/
+                                AND type = :type
+                                AND ville = :ville
+                                AND date_dispo_debut <= :recherche_datedebut
+                                AND date_dispo_fin >= :recherche_datefin");
+
           $req->execute(array(
             'prix' => $_POST['recherche_prix'],
             'ville' => $_POST['recherche_ville'],
-            'type' => $_POST['recherche_type']
-            /*'recherche_datedebut' => $_POST['recherche_datedebut'],
-            'recherche_datefin' => $_POST['recherche_datefin']*/
+            'type' => $_POST['recherche_type'],
+            'recherche_datedebut' => $_POST['recherche_datedebut'],
+            'recherche_datefin' => $_POST['recherche_datefin']
           ));
+
+          echo '<ul class="liste_annonces">';
+          while ($donnees = $req->fetch()) {
+            if (estDispo($donnees['id_annonce'], $_POST['recherche_datedebut'], $_POST['recherche_datefin'])) {
+              afficheAnnonces($donnees);
+            }
+          }
+          echo "</ul></br></br>";
+          $req->CloseCursor();
+
         }
+
         else {
           $req = $bdd->prepare('SELECT * FROM annonces');
 
           $req->execute();
-        }
 
-        echo '<ul class="liste_annonces">';
-        while ($donnees = $req->fetch()) {
-          if (isset($datedebut)) echo '<li><a href="?annonce='.$donnees['id_annonce'].'&datedebut='.$datedebut.'&datefin='.$datefin.'">';
-          else echo '<li><a href="?annonce='.$donnees['id_annonce'].'">';
-          echo 'Type : '.$donnees['type'];
-          echo '<br>Ville :'.$donnees['ville'];
-          echo '<br>Prix : '.$donnees['prix'].'€';
-          echo '<br>Auteur : '.$donnees['auteur'];
-          $id_annonce = $donnees['id_annonce'];
-          $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce');
-          $req2->execute(array(
-            'id_annonce' => $id_annonce
-          ));
-          $donnees2=$req2->fetch();
-          $image ='images/'.$id_annonce.'/'.$donnees2['nom_image'];
-          echo '<br><img src="'.$image.'"width="400" height="200"><br>';
-          echo '</a></li>';
+
+          echo '<ul class="liste_annonces">';
+          while ($donnees = $req->fetch()) {
+            afficheAnnonces($donnees);
+          }
+          echo '</ul><br><br>';
         }
-        echo '</ul><br><br>';
 
 
 
