@@ -164,7 +164,7 @@
 
         else { ?>
           <form action="private_message.php" method="post">
-          Destinataire : <input type="text" name="destinataire" required><br />
+          Destinataire : <input type="text" <?php if (isset($_GET['for'])) echo 'value="'.$_GET['for'].'"'; ?>name="destinataire" required><br />
           Titre : <input type="text" name="titre" required><br /><br />
         <?php }?>
           <textarea name="message" rows="8" cols="45"></textarea>
