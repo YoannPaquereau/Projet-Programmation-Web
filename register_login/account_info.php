@@ -1,11 +1,13 @@
 <?php
   /* Ajouter les informations concernant la note d'évaluation de l'utilisateur */
 
+  // On démarre la session
   session_start();
 ?>
 
 <html>
   <?php
+    // On importe notre menu
     require "../header.php";
   ?>
     <meta charset="utf-8" />
@@ -16,6 +18,7 @@
   <body>
     <?php
 
+      // On importe nos paramètres de notre base de données
       require "myparam.inc.php";
 
 
@@ -29,7 +32,9 @@
         die('Erreur : ' . $e->getMessage());
       }
 
+      // Si on est sur un profil autre que le notre
       if (isset($_GET['user'])) $user = $_GET['user'];
+
       else $user = $_SESSION['user'];
 
       // On prépare la requête d'insertion
@@ -56,10 +61,9 @@
       // On ferme la requête
       $req->CloseCursor();
 
-
+      // On affiche les valeurs que l'on vient de récupérer sous forme de liste
     ?>
 
-    <!-- On affiche les valeurs que l'on vient de récupérer sous forme de liste -->
     <h2>Informations du compte</h2>
     <p>
       <ul>
@@ -73,6 +77,7 @@
     </p>
 
     <?php
+    // Si on est pas sur notre profil, proposer de contacter cette personne
     if (isset($_GET['user']))
       echo '<a href="private_message.php?for='.$_GET['user'].'">Contacter cette personne ?</a>';
     ?>
@@ -91,27 +96,39 @@
       die('erreur : '.$e->getmessage());
     }
 
+    // Requête permettant de récupérer les annonces créées par l'utilisateur
     $req = $bdd->prepare('SELECT * FROM annonces WHERE auteur = :auteur');
 
+    // On l'exécute
     $req->execute(array(
       'auteur' => $user
     ));
 
+    // On inclut les fonctions contenus dans le fichier f_annonce.php
     require "../include/f_annonce.php";
+
+    // On fait une liste qui va contenir nos annonces
     echo '<ul class="liste_annonces">';
 
+    // Tant que le résultat de notre requête n'est pas vide (ligne par ligne)
     while ($donnees = $req->fetch()) {
+
+        // On affiche les infos de nos annonces à l'aide de notre fonction
         afficheInfosAnnonces($donnees);
     }
     echo "</ul>";
+
+    // On ferme notre requête
     $req->CloseCursor();
 
 
+    // Si on est sur notre profile, on affiche nos réservations
     if (!isset($_GET['user'])) {
       ?>
       <h2>Mes r&eacute;servations</h2>
       <?php
-        $req = $bdd->prepare('SELECT * FROM annonces, reservation WHERE client = :client AND id_annonce = annonce');
+        $req = $bdd->prepare('SELECT * FROM annonces, reservation
+                              WHERE client = :client AND id_annonce = annonce');
         $req->execute(array(
           'client' => $_SESSION['user']
         ));

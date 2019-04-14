@@ -14,13 +14,18 @@
   <body>
     <h1>Annonces</h1>
     <?php
+
+    // Si on est pas connecté, la page n'est pas accessible
     if (!isset($_SESSION['user'])) echo "Page not found";
     else {
 
+        // On inclut nos paramètres de connexion à notre base de données
         require "register_login/myparam.inc.php";
 
+        // idem pour les fonctions pour l'affichage des annonces
         require "include/f_annonce.php";
 
+        // Si on est sur une annonce particulier
         if (isset($_GET['annonce'])) {
           try
           {
@@ -31,9 +36,13 @@
             die('erreur : '.$e->getmessage());
           }
 
-
+          // Si on a utilisé le formulaire pour réserver
           if (isset($_POST['resa_debut'])) {
+
+            // Si le logement est disponible entre les dates données
             if (estDispo($_GET['annonce'], $_POST['resa_debut'], $_POST['resa_fin'])) {
+
+              // Requête permettant d'insérer la réservation
               $req = $bdd->prepare('INSERT INTO reservation(client, auteur, date_debut, date_fin, annonce)
                                     VALUES (:client, :auteur, :date_debut, :date_fin, :annonce)');
 
@@ -45,38 +54,50 @@
                 'annonce' => $_GET['annonce']
               ));
 
+              // Redirection vers la page d'accueil des annonces
               header('Refresh:3;url=annonces.php');
               echo 'Annonce r&eacute;serv&eacute;e !<br><br>Redirection dans 3 secondes...<br>Trop long ? <a href="annonces.php">Clique ici</a>';
             } else {
+
+              // On revient sur la même page d'annonce
               header('Refresh:3;url=annonces.php?annonce='.$_GET['annonce']);
               echo "Date de r&eacute;servation non valide. Veuillez r&eacuteessayer";
             }
           }
+
+          // Si on a pas réservé
           else {
 
-
+            // On récupère l'annonce qu'on a sélectionné dans notre base de données
             $req = $bdd->prepare('SELECT * FROM annonces WHERE id_annonce=:id');
             $req->execute(array(
               'id' => $_GET['annonce']
             ));
 
+
+            // On récupère le résultat de notre requête
             $donnees = $req->fetch();
             $auteur = $donnees['auteur'];
 
+            // Que l'on va afficher
             echo 'Type : '.$donnees['type'];
             echo '<br>Ville :'.$donnees['ville'];
             echo '<br>Prix : '.$donnees['prix'].'€';
             if ($donnees['auteur'] != $_SESSION['user']) echo '<br>Auteur : '.$donnees['auteur'].' (<a href="/Projet/register_login/account_info.php?user='.$donnees['auteur'].'">Voir son profil</a>)';
 
             $req->CloseCursor();
+
+            // On récupère le nom de toutes les images de notre annonce
             $req = $bdd->prepare('SELECT nom_image FROM image WHERE annonce = :id');
 
             $req->execute(array(
               'id' => $_GET['annonce']
             ));
 
-
+            // On met le chemin pour ouvrir notre image dans une variable
             $dossier = 'images/'.$_GET['annonce'].'/';
+
+            // On va afficher nos images sous forme de liste
             echo '<ul class="annonce">';
             while($donnees = $req->fetch()) {
               echo '<li><img src="'.$dossier.$donnees['nom_image'].'"width="400" height="200"></li>';
@@ -85,6 +106,7 @@
 
             $req->CloseCursor();
 
+            // On affiche le formulaire de réservation uniquement si ce n'est pas notre propre annonce
             if ($auteur != $_SESSION['user']) {
             ?>
               <h2>R&eacute;server</h2>
@@ -97,20 +119,29 @@
         <?php } } }
 
 
+
+        // Si on est dans l'accueil des annonces et qu'on a pas créé une annonce
         elseif (!isset($_POST["type"]) || !isset($_POST["ville"]) || !isset($_POST["prix"]) || !isset($_POST["nombre_images"])) {
+
+          // On met date minimum à celle d'aujourd'hui, et celle max dans 1 an
           $datemin= date("Y-m-d");
           $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
           ?>
           <p>
             <?php
+
+              // Si on a effectué une recherche
               if (isset($_POST['recherche_ville'])) {
                 $ville = $_POST['recherche_ville'];
                 $prix = $_POST['recherche_prix'];
                 $type = $_POST['recherche_type'];
                 $datedebut = $_POST['recherche_datedebut'];
                 $datefin = $_POST['recherche_datefin'];
-              } ?>
+              }
 
+
+              // On affiche le formulaire de recherche, avec les valeurs de notre recherche précédente (s'il il y en a une)
+              ?>
             <form action='annonces.php' method="post">
               <select name="recherche_ville">
                 <option value="<?php if (isset($ville)) echo $ville; ?>"><?php echo (isset($ville) ? $ville : 'Ville');?></option>
@@ -147,9 +178,10 @@
               die('erreur : '.$e->getmessage());
             }
 
+            // Si on a effectué une recherche
             if (isset($_POST['recherche_prix'])) {
 
-
+              // Requête récupérant les annonces correspondant aux restrictions de notre recherche
               $req = $bdd->prepare("SELECT * FROM annonces
                                     WHERE prix <=:prix
                                     AND type = :type
@@ -166,6 +198,7 @@
                 'auteur' => $_SESSION['user']
               ));
 
+              // On affiche ces annonces sous forme de liste
               echo '<ul class="liste_annonces">';
               while ($donnees = $req->fetch()) {
                 if (estDispo($donnees['id_annonce'], $_POST['recherche_datedebut'], $_POST['recherche_datefin'])) {
@@ -177,14 +210,17 @@
 
             }
 
+            // Si pas de recherche
             else {
+
+              // On récupère toutes les annonces (hormis les notres)
               $req = $bdd->prepare('SELECT * FROM annonces WHERE auteur <> :auteur');
 
               $req->execute(array(
                 'auteur' => $_SESSION['user']
               ));
 
-
+              // On affiche les annonces sous forme de liste
               echo '<ul class="liste_annonces">';
               while ($donnees = $req->fetch()) {
                 afficheInfosAnnonces($donnees);
@@ -194,12 +230,14 @@
 
 
 
-
+            // Date min et max pour la création d'une annonce (à partir de demain)
             $datemin2 = date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 day"));
             $datemax2= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemax)) . " +1 day"));
             ?>
 
+            <h2>Cr&eacute;ation d'une annonce</h2>
 
+            <?php // Formulaire de création d'une annonce ?>
             <form action="annonces.php" method="post">
               Type: <select name="type">
                       <option value="Maison">Maison</option>
@@ -227,22 +265,26 @@
         }
 
 
-
+        // Si on a créé une annonce, mais pas encore envoyé d'image(s)
         elseif (!isset($_FILES['fichier0']))
         {
+
+          // On récupère les dates
           $datedebut= $_POST["datedebut"];
           $datefin= $_POST["datefin"];
 
+          // On vérifie que la date de fin est bien après la date de début
           if ((strtotime($datedebut) >= strtotime($datefin))) echo("ERREUR,Date de fin antérieur à la date de debut") ;
-          else{
+          else {
 
+          // On récupère toutes les informations de notre formulaire
           $type = $_POST["type"];
           $ville = $_POST["ville"];
           $prix = $_POST["prix"];
           $nbr_images = $_POST["nombre_images"];
 
 
-          ?>
+          // On recréé un formulaire permettant l'envoi de nos images (en fonction du nombre donné) ?>
           <form method="post" action="annonces.php" enctype="multipart/form-data">
             <?php
             for ($i=0;$i<$nbr_images;$i++)
@@ -262,7 +304,7 @@
       }
 
 
-
+        // Si on a envoyéau moins une image
         elseif (isset($_FILES["fichier0"]))
         {
 
@@ -361,14 +403,22 @@
                 'annonce' => $id
               ));
 
+              // On met le path de notre dossier dans une variable
               $dossier = "images/$id";
+
+              // S'il n'existe pas, on le créé
               if (!is_dir($dossier))
                 mkdir($dossier, 0777, true);
 
+              // On met maintenant le chemin permettant d'ouvrir notre image (ex : image/14/image.png)
               $dossier = $dossier.'/'.$i.'.'.$ext;
+
+              // On transfère notre image dans notre dossier
               $resultat = move_uploaded_file($_FILES['fichier'.$i]['tmp_name'], $dossier);
             }
           }
+
+          // Une fois que notre annonce a bien été enregistrée, on fait une redirection
           header('Refresh:3;url=annonces.php');
           echo 'Annonce publiée !<br><br>Redirection dans 3 secondes...<br>Trop long ? <a href="annonces.php">Clique ici</a>';
         }
