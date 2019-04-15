@@ -1,3 +1,8 @@
+<?php
+// Code par TRAORE Abdoul Aziz - PAQUEREAU Yoann
+
+?>
+
 <head>
   <meta charset="utf-8" />
   <link rel="stylesheet" type='text/css' href="/Projet/CSS/style.css" />

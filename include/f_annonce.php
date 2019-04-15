@@ -1,4 +1,7 @@
 <?php
+// Code par TRAORE Abdoul Aziz - PAQUEREAU Yoann
+
+
 
 
 // Fonction permetant de savoir si une annonce est disponible pour une réservation

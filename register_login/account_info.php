@@ -1,5 +1,7 @@
 <?php
-  /* Ajouter les informations concernant la note d'évaluation de l'utilisateur */
+// Code par TRAORE Abdoul Aziz - PAQUEREAU Yoann
+
+
 
   // On démarre la session
   session_start();

@@ -1,4 +1,7 @@
 <?php
+// Code par TRAORE Abdoul Aziz - PAQUEREAU Yoann
+
+
   session_start();
 ?>
 <html>
