@@ -123,7 +123,53 @@
                 <input type="hidden" name="resa_auteur" value="<?php echo $auteur;?>">
                 <input type="submit" value="Réserver">
               </form>
-        <?php } } }
+        <?php
+            }
+
+
+            // Requête permettant de récupérer le nombre d'avis pour une annonce
+            $req2 = $bdd->prepare('SELECT count(*) AS nbr FROM avis, reservation WHERE reservation.id_reservation=avis.reservation AND annonce=:id_annonce');
+            $req2->execute(array(
+              'id_annonce' => $_GET['annonce']
+            ));
+
+            // On récupère nos données
+            $donnees2 = $req2->fetch();
+
+            // S'il y a au moins un avis, on les affiche et on fait la moyenne des notes
+            if ($donnees2['nbr']) {
+
+              // Requête permettant de récupérer tous les avis d'une annonce
+              $req = $bdd->prepare('SELECT note, avis FROM reservation, avis WHERE reservation.id_reservation=avis.reservation AND annonce=:id_annonce');
+
+              $req->execute(array(
+                'id_annonce' => $_GET['annonce']
+              ));
+
+
+              echo "<h2>Avis</h2>";
+
+              // On récupère nos avis
+              while($donnees2 = $req->fetch()){
+                echo 'Note :'.$donnees2['note'].'<br>Avis : '.$donnees2['avis'].'<br><br>';
+              }
+
+              // On fait la moyenne des notes
+              $req = $bdd->prepare('SELECT AVG(note) AS myne FROM avis, reservation WHERE reservation.id_reservation=avis.reservation AND annonce=:id_annonce');
+
+              // Sur une annonce
+              $req->execute(array(
+                'id_annonce' => $_GET['annonce']
+              ));
+
+              echo "<h2>Moyenne:</h2>";
+
+              // On l'affiche
+              $donnees2 = $req->fetch();
+              echo 'Moyenne des Notes :'.$donnees2['myne'];
+            }
+          }
+        }
 
 
 

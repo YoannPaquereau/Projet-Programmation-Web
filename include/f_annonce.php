@@ -1,7 +1,6 @@
 <?php
 
 
-
 // Fonction permetant de savoir si une annonce est disponible pour une réservation
 function estDispo($id_annonce, $dateDebut, $dateFin) {
   try

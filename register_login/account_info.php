@@ -129,19 +129,66 @@
       ?>
       <h2>Mes r&eacute;servations</h2>
       <?php
+
+        // Requête permettant de récupérer les réservation d'une annonce
         $req = $bdd->prepare('SELECT * FROM annonces, reservation
                               WHERE client = :client AND id_annonce = annonce');
+
         $req->execute(array(
           'client' => $_SESSION['user']
         ));
 
+        // On affiche ces réservations sous forme de liste
         echo '<ul class="liste_resa">';
         while ($donnees = $req->fetch()) {
             afficheResa($donnees);
-        }
-        echo '</ul>';
-    }
 
-    ?>
+        // Requête permettant de récupérer le nombre d'avis pour une réservation
+        $req2 = $bdd->prepare('SELECT count(*) AS nbr FROM avis WHERE reservation = :id');
+
+        $req2->execute(array(
+          'id' => $donnees['id_reservation']
+        ));
+
+        $donnees2 = $req2->fetch();
+
+        // S'il n'y a pas d'avis
+        if (!$donnees2['nbr']) {
+
+          // Si la réservation est finie, on peut laisser un avis
+          if ($donnees["date_fin"] < date("Y-m-d"))
+          {
+            // Formulaire permettant de laisser l'avis
+            ?>
+            <form method="post" action="account_info.php">
+              <select name="avis" required>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+              </select>
+              <input type="hidden" name="id_resa" value="<?php echo $donnees['id_reservation'];?>">
+              Laisser un message a l'auteur conçernant votre sejour...?<br>
+              <textarea name="message" rows="5" cols="40" required></textarea><br>
+              <input type="submit" value="Envoyer">
+            </form>
+            <?php
+          }
+
+          // Si on a laissé un avis
+          if (isset($_POST["avis"]))
+          {
+            $req2=$bdd->prepare('INSERT INTO avis(avis,note, reservation) VALUES (:avis,:note, :reservation)');
+            $req2->execute(array(
+              'avis' => $_POST["message"],
+              'note' => $_POST["avis"],
+              'reservation' => $_POST['id_resa']
+            ));
+          }
+        }
+      }
+    echo '</ul>';
+  } ?>
   </body>
 </html>

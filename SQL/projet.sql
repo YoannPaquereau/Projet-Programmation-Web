@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le :  mer. 03 avr. 2019 à 18:53
+-- Généré le :  lun. 15 avr. 2019 à 15:04
 -- Version du serveur :  10.1.38-MariaDB
 -- Version de PHP :  7.3.3
 
@@ -80,7 +80,9 @@ CREATE TABLE `reservation` (
   `auteur` varchar(20) COLLATE utf8_bin NOT NULL,
   `date_debut` date NOT NULL,
   `date_fin` date NOT NULL,
-  `annonce` int(11) NOT NULL
+  `annonce` int(11) NOT NULL,
+  `avis` text COLLATE utf8_bin,
+  `note` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
