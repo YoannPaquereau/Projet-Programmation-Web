@@ -114,7 +114,9 @@
     while ($donnees = $req->fetch()) {
 
         // On affiche les infos de nos annonces à l'aide de notre fonction
+        echo '<li>';
         afficheInfosAnnonces($donnees);
+        echo '</li>';
     }
     echo "</ul>";
 
@@ -123,7 +125,7 @@
 
 
     // Si on est sur notre profile, on affiche nos réservations
-    if (!isset($_GET['user'])) {
+    if (!isset($_GET['user']) || $_GET['user'] == $_SESSION['user']) {
       ?>
       <h2>Mes r&eacute;servations</h2>
       <?php
@@ -133,9 +135,11 @@
           'client' => $_SESSION['user']
         ));
 
+        echo '<ul class="liste_resa">';
         while ($donnees = $req->fetch()) {
-            afficheInfosAnnonces($donnees);
+            afficheResa($donnees);
         }
+        echo '</ul>';
     }
 
     ?>

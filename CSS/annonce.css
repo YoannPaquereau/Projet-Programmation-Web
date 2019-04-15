@@ -4,6 +4,8 @@
 }
 
 .liste_annonces li {
+  display: inline-flex;
+  position: relative;
   margin: 10;
   padding: 7;
   width: 420px;
@@ -12,14 +14,6 @@
   border-radius: 1em;
 }
 
-.liste_annonces li a:hover, .menu li a:focus, .menu li a:active {
-  text-decoration: underline;
-}
-
-.liste_annonces li {
-  display: inline-flex;
-  position: relative;
-}
 
 .liste_annonces a:before {
   content: '';
@@ -35,4 +29,13 @@
   display: inline-flex;
   position: relative;
   margin: 10;
+}
+
+.liste_resa a {
+  text-decoration: none;
+  color: blue;
+}
+
+.liste_resa li {
+  display: inline-block;
 }

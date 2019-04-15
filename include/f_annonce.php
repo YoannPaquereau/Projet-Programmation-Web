@@ -54,6 +54,35 @@ function estDispo($id_annonce, $dateDebut, $dateFin) {
 
 
 
+function afficheFirstImage($id_annonce) {
+  try
+  {
+    $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
+  }
+  catch(Exception $e)
+  {
+    die('erreur : '.$e->getmessage());
+  }
+
+
+  // On prépare notre requête permettant de récupérer le nom de la 1ère image de notre annonce
+  $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce LIMIT 0,1');
+
+  // On l'exécute (avec l'id de notre annonce)
+  $req2->execute(array(
+    'id_annonce' => $id_annonce
+  ));
+
+  // On récupère les données de notre requête
+  $donnees2=$req2->fetch();
+
+  // On met le chemin pour ouvrir notre image
+  $image ='/Projet/images/'.$id_annonce.'/'.$donnees2['nom_image'];
+
+  // On l'affiche
+  echo '<br><img src="'.$image.'"width="400" height="200"><br>';
+}
+
 
 // Fonction permettant d'afficher les détails d'une annonce (Prix, localisation,...)
 function afficheInfosAnnonces($donnees) {
@@ -67,9 +96,9 @@ function afficheInfosAnnonces($donnees) {
   }
 
     // Si on utilise la recherche d'annonces (dans la page annonces.php)
-    if (isset($_POST['recherche_datedebut'])) echo '<li><a href="?annonce='.$donnees['id_annonce'].'&datedebut='.$_POST['recherche_datedebut'].'&datefin='.$_POST['recherche_datefin'].'">';
+    if (isset($_POST['recherche_datedebut'])) echo '<a href="?annonce='.$donnees['id_annonce'].'&datedebut='.$_POST['recherche_datedebut'].'&datefin='.$_POST['recherche_datefin'].'">';
 
-    else echo '<li><a href="/Projet/annonces.php?annonce='.$donnees['id_annonce'].'">';
+    else echo '<a href="/Projet/annonces.php?annonce='.$donnees['id_annonce'].'">';
 
     // On affiche les données de notre annonces
     echo 'Type : '.$donnees['type'];
@@ -77,32 +106,15 @@ function afficheInfosAnnonces($donnees) {
     echo '<br>Prix : '.$donnees['prix'].'€';
     echo '<br>Auteur : '.$donnees['auteur'];
 
-    $id_annonce = $donnees['id_annonce'];
-
-    // On prépare notre requête permettant de récupérer le nom de la 1ère image de notre annonce
-    $req2 = $bdd->prepare('SELECT nom_image FROM image WHERE annonce=:id_annonce LIMIT 0,1');
-
-    // On l'exécute (avec l'id de notre annonce)
-    $req2->execute(array(
-      'id_annonce' => $id_annonce
-    ));
-
-    // On récupère les données de notre requête
-    $donnees2=$req2->fetch();
-
-    // On met le chemin pour ouvrir notre image
-    $image ='/Projet/images/'.$id_annonce.'/'.$donnees2['nom_image'];
-
-    // On l'affiche
-    echo '<br><img src="'.$image.'"width="400" height="200"><br>';
-    echo '</a></li>';
+    afficheFirstImage($donnees['id_annonce']);
+    echo '</a>';
 }
 
 
 
 
   // Fonction permettant d'afficher les détails d'une réservation
-  function afficheResaAnnonces($donnees) {
+  function afficheResa($donnees) {
     try
     {
       $bdd = new PDO('mysql:host='.MYHOST.';dbname='.MYBASE.';charset=utf8',MYUSER,MYPASS);
@@ -116,8 +128,8 @@ function afficheInfosAnnonces($donnees) {
     echo '<li><a href="/Projet/annonces.php?annonce='.$donnees['id_annonce'].'">';
 
     // Détails de la réservation
-    echo 'Date de d&eacute : '.$donnees['date_debut'].'<br>';
-    echo 'Date de fin '.$donnees['date_fin'].'<br>';
+    echo 'Date de d&eacute;but : '.$donnees['date_debut'].'<br>';
+    echo 'Date de fin : '.$donnees['date_fin'].'</a></li><br>';
 
   }
 ?>

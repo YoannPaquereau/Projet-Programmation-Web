@@ -39,8 +39,13 @@
           // Si on a utilisé le formulaire pour réserver
           if (isset($_POST['resa_debut'])) {
 
+            if ($_POST['resa_fin'] < $_POST['resa_debut']) {
+              header('Refresh:3;url=annonces.php?annonce='.$_GET['annonce']);
+              echo "Date de fin est après la date de d&eacute;but. Veuillez r&eacuteessayer";
+            }
+
             // Si le logement est disponible entre les dates données
-            if (estDispo($_GET['annonce'], $_POST['resa_debut'], $_POST['resa_fin'])) {
+            elseif (estDispo($_GET['annonce'], $_POST['resa_debut'], $_POST['resa_fin'])) {
 
               // Requête permettant d'insérer la réservation
               $req = $bdd->prepare('INSERT INTO reservation(client, auteur, date_debut, date_fin, annonce)
@@ -61,7 +66,7 @@
 
               // On revient sur la même page d'annonce
               header('Refresh:3;url=annonces.php?annonce='.$_GET['annonce']);
-              echo "Date de r&eacute;servation non valide. Veuillez r&eacuteessayer";
+              echo "Logement non disponible pour cette p&eacute;riode. Veuillez r&eacuteessayer";
             }
           }
 
@@ -108,11 +113,13 @@
 
             // On affiche le formulaire de réservation uniquement si ce n'est pas notre propre annonce
             if ($auteur != $_SESSION['user']) {
-            ?>
+              $datemin= date("Y-m-d");
+              $datemax= date("Y-m-d", strtotime(date("Y-m-d", strtotime($datemin)) . " +1 year"));
+              ?>
               <h2>R&eacute;server</h2>
               <form action="annonces.php?annonce=<?php echo $_GET['annonce'];?>" method="post" class="reservation">
-                Date de d&eacute;but : <input type="date" name="resa_debut" value="<?php echo (isset($_GET['datedebut'])) ? $_GET['datedebut'] : $datemin;?>" required><br>
-                Date de fin : <input type="date" name="resa_fin" value="<?php echo (isset($_GET['datefin'])) ? $_GET['datefin'] : $datemin;?>" required><br>
+                Date de d&eacute;but : <input type="date" name="resa_debut" value="<?php echo (isset($_GET['datedebut'])) ? $_GET['datedebut'] : $datemin;?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required><br>
+                Date de fin : <input type="date" name="resa_fin" value="<?php echo (isset($_GET['datefin'])) ? $_GET['datefin'] : $datemin;?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required><br>
                 <input type="hidden" name="resa_auteur" value="<?php echo $auteur;?>">
                 <input type="submit" value="Réserver">
               </form>
@@ -160,9 +167,9 @@
               </select>
 
               <input type="number" name="recherche_prix" <?php if (isset($_POST['recherche_prix'])) echo 'value="'.$_POST['recherche_prix'].'"'; else echo 'placeholder="Prix maximum"';?>  step="1" min="20"  required>
-              <input type ="date" name="recherche_datedebut" value="<?php echo (isset($datedebut) ? $datedebut : $datemin);?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
-              <input type ="date" name="recherche_datefin" value="<?php echo (isset($datefin) ? $datefin : $datemin);?>"    min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
-              <input type="submit" name="submit" value="Rechercher">
+              <input type="submit" name="submit" value="Rechercher"><br>
+              D&eacute;but : <input type ="date" name="recherche_datedebut" value="<?php echo (isset($datedebut) ? $datedebut : $datemin);?>" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
+              Fin : <input type ="date" name="recherche_datefin" value="<?php echo (isset($datefin) ? $datefin : $datemin);?>"    min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required>
             </form>
 
 
@@ -202,7 +209,9 @@
               echo '<ul class="liste_annonces">';
               while ($donnees = $req->fetch()) {
                 if (estDispo($donnees['id_annonce'], $_POST['recherche_datedebut'], $_POST['recherche_datefin'])) {
+                  echo '<li>';
                   afficheInfosAnnonces($donnees);
+                  echo '</li>';
                 }
               }
               echo "</ul></br></br>";
@@ -223,7 +232,9 @@
               // On affiche les annonces sous forme de liste
               echo '<ul class="liste_annonces">';
               while ($donnees = $req->fetch()) {
+                echo '<li>';
                 afficheInfosAnnonces($donnees);
+                echo '</li>';
               }
               echo '</ul><br><br>';
             }
@@ -253,7 +264,7 @@
                     </select><br>
               Prix: <input type="number" name="prix" placeholder="Prix" step="0.01" min="20"  required><br>
 
-              Date de debut: <input type ="date" name="datedebut" min="<?php echo $datemin;?>" max="<?php echo $datemax;?>" required><br>
+              Date de debut: <input type ="date" name="datedebut" min="<?php echo $datemin2;?>" max="<?php echo $datemax2;?>" required><br>
 
               Date de fin: <input type ="date" name="datefin"min="<?php echo $datemin2;?>" max="<?php echo $datemax2;?>" required><br>
               Nombre image(s): <input type="number" name="nombre_images" min="1" max="8" required><br>
