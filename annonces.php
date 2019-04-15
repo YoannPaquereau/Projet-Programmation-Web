@@ -139,6 +139,17 @@
             // S'il y a au moins un avis, on les affiche et on fait la moyenne des notes
             if ($donnees2['nbr']) {
 
+              // On fait la moyenne des notes
+              $req = $bdd->prepare('SELECT AVG(note) AS myne FROM avis, reservation WHERE reservation.id_reservation=avis.reservation AND annonce=:id_annonce');
+
+              // Sur une annonce
+              $req->execute(array(
+                'id_annonce' => $_GET['annonce']
+              ));
+
+              // On l'affiche
+              $donnees2 = $req->fetch();
+
               // Requête permettant de récupérer tous les avis d'une annonce
               $req = $bdd->prepare('SELECT note, avis FROM reservation, avis WHERE reservation.id_reservation=avis.reservation AND annonce=:id_annonce');
 
@@ -149,24 +160,14 @@
 
               echo "<h2>Avis</h2>";
 
+              echo 'Moyenne des Notes :'.round($donnees2['myne'], 1).'<br><br>';
+
               // On récupère nos avis
               while($donnees2 = $req->fetch()){
                 echo 'Note :'.$donnees2['note'].'<br>Avis : '.$donnees2['avis'].'<br><br>';
               }
 
-              // On fait la moyenne des notes
-              $req = $bdd->prepare('SELECT AVG(note) AS myne FROM avis, reservation WHERE reservation.id_reservation=avis.reservation AND annonce=:id_annonce');
 
-              // Sur une annonce
-              $req->execute(array(
-                'id_annonce' => $_GET['annonce']
-              ));
-
-              echo "<h2>Moyenne:</h2>";
-
-              // On l'affiche
-              $donnees2 = $req->fetch();
-              echo 'Moyenne des Notes :'.$donnees2['myne'];
             }
           }
         }

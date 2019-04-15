@@ -153,7 +153,7 @@
         $donnees2 = $req2->fetch();
 
         // S'il n'y a pas d'avis
-        if (!$donnees2['nbr']) {
+        if (!$donnees2['nbr'] && !isset($_POST['avis'])) {
 
           // Si la réservation est finie, on peut laisser un avis
           if ($donnees["date_fin"] < date("Y-m-d"))
@@ -175,17 +175,17 @@
             </form>
             <?php
           }
+        }
 
-          // Si on a laissé un avis
-          if (isset($_POST["avis"]))
-          {
-            $req2=$bdd->prepare('INSERT INTO avis(avis,note, reservation) VALUES (:avis,:note, :reservation)');
-            $req2->execute(array(
-              'avis' => $_POST["message"],
-              'note' => $_POST["avis"],
-              'reservation' => $_POST['id_resa']
-            ));
-          }
+        // Si on a laissé un avis
+        if (isset($_POST["avis"]))
+        {
+          $req2=$bdd->prepare('INSERT INTO avis(avis,note, reservation) VALUES (:avis,:note, :reservation)');
+          $req2->execute(array(
+            'avis' => $_POST["message"],
+            'note' => $_POST["avis"],
+            'reservation' => $_POST['id_resa']
+          ));
         }
       }
     echo '</ul>';
