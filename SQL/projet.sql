@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le :  lun. 15 avr. 2019 à 15:04
+-- Généré le :  lun. 15 avr. 2019 à 20:44
 -- Version du serveur :  10.1.38-MariaDB
 -- Version de PHP :  7.3.3
 
@@ -39,6 +39,19 @@ CREATE TABLE `annonces` (
   `auteur` varchar(20) COLLATE utf8_bin NOT NULL,
   `date_dispo_debut` date NOT NULL,
   `date_dispo_fin` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `avis`
+--
+
+CREATE TABLE `avis` (
+  `id_avis` int(11) NOT NULL,
+  `note` int(11) NOT NULL,
+  `avis` text COLLATE utf8_bin NOT NULL,
+  `reservation` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -80,9 +93,7 @@ CREATE TABLE `reservation` (
   `auteur` varchar(20) COLLATE utf8_bin NOT NULL,
   `date_debut` date NOT NULL,
   `date_fin` date NOT NULL,
-  `annonce` int(11) NOT NULL,
-  `avis` text COLLATE utf8_bin,
-  `note` int(11) DEFAULT NULL
+  `annonce` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -111,6 +122,13 @@ CREATE TABLE `users` (
 ALTER TABLE `annonces`
   ADD PRIMARY KEY (`id_annonce`),
   ADD KEY `proprietaire` (`auteur`);
+
+--
+-- Index pour la table `avis`
+--
+ALTER TABLE `avis`
+  ADD PRIMARY KEY (`id_avis`),
+  ADD UNIQUE KEY `reservation` (`reservation`);
 
 --
 -- Index pour la table `image`
@@ -154,6 +172,12 @@ ALTER TABLE `annonces`
   MODIFY `id_annonce` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pour la table `avis`
+--
+ALTER TABLE `avis`
+  MODIFY `id_avis` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pour la table `image`
 --
 ALTER TABLE `image`
@@ -180,6 +204,12 @@ ALTER TABLE `reservation`
 --
 ALTER TABLE `annonces`
   ADD CONSTRAINT `fknom` FOREIGN KEY (`auteur`) REFERENCES `users` (`login`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `avis`
+--
+ALTER TABLE `avis`
+  ADD CONSTRAINT `fk_avis` FOREIGN KEY (`reservation`) REFERENCES `reservation` (`id_reservation`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `image`
