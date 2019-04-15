@@ -12,6 +12,8 @@
   height: 315px;
   border: 1px solid #000;
   border-radius: 1em;
+
+
 }
 
 
@@ -22,20 +24,10 @@
   right: 0;
   top: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0);
 }
 
 .annonce li {
   display: inline-flex;
   position: relative;
   margin: 10;
-}
-
-.liste_resa a {
-  text-decoration: none;
-  color: blue;
-}
-
-.liste_resa li {
-  display: inline-block;
 }

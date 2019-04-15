@@ -126,7 +126,7 @@ function afficheInfosAnnonces($donnees) {
 
     // Lien permettant de voir les détails de l'annonce réservée
     echo '<li><a href="/Projet/annonces.php?annonce='.$donnees['id_annonce'].'">';
-
+    afficheFirstImage($donnees['id_annonce']);
     // Détails de la réservation
     echo 'Date de d&eacute;but : '.$donnees['date_debut'].'<br>';
     echo 'Date de fin : '.$donnees['date_fin'].'</a></li><br>';
